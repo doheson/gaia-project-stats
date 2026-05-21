@@ -35,15 +35,15 @@ export default function MatchList() {
   if (loading) return <LoadingSpinner />
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100">게임 목록</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-100">게임 목록</h1>
           <p className="text-slate-400 text-sm mt-1">총 {matches.length}게임</p>
         </div>
         <Link
           to="/new-match"
-          className="bg-violet-600 hover:bg-violet-500 text-white text-sm px-4 py-2 rounded-lg font-medium transition-colors"
+          className="bg-violet-600 hover:bg-violet-500 text-white text-sm px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors"
         >
           + 게임 입력
         </Link>
@@ -57,13 +57,13 @@ export default function MatchList() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-700">
-                  <th className="text-left px-5 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-28">날짜</th>
-                  <th className="text-center px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-12">순위</th>
-                  <th className="text-left px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-28">플레이어</th>
-                  <th className="text-left px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">종족</th>
-                  <th className="text-right px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-16">총점</th>
-                  <th className="text-right px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-16">비딩</th>
-                  <th className="text-right px-5 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-16">최종</th>
+                  <th className="text-left px-3 sm:px-5 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-24">날짜</th>
+                  <th className="text-center px-2 sm:px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-10">순위</th>
+                  <th className="text-left px-2 sm:px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">플레이어</th>
+                  <th className="text-left px-2 sm:px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">종족</th>
+                  <th className="hidden sm:table-cell text-right px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-14">총점</th>
+                  <th className="hidden sm:table-cell text-right px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-14">비딩</th>
+                  <th className="text-right px-3 sm:px-5 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-14">최종</th>
                 </tr>
               </thead>
               <tbody>
@@ -78,9 +78,8 @@ export default function MatchList() {
                         transition-colors
                       `}
                     >
-                      {/* 날짜: 첫 번째 행에만 */}
                       {i === 0 ? (
-                        <td className="px-5 py-2.5" rowSpan={sorted.length}>
+                        <td className="px-3 sm:px-5 py-2 align-top pt-3" rowSpan={sorted.length}>
                           <Link
                             to={`/matches/${match.match_id}`}
                             className="text-xs text-slate-300 hover:text-violet-300 transition-colors block whitespace-nowrap"
@@ -88,22 +87,22 @@ export default function MatchList() {
                             {match.played_at}
                           </Link>
                           {match.memo && (
-                            <span className="text-xs text-slate-600 block mt-0.5">{match.memo}</span>
+                            <span className="text-xs text-slate-600 block mt-0.5 max-w-[80px] truncate">{match.memo}</span>
                           )}
                         </td>
                       ) : null}
-                      <td className="px-3 py-2.5 text-center">
+                      <td className="px-2 sm:px-3 py-2 text-center">
                         <RankBadge rank={p.rank} />
                       </td>
-                      <td className={`px-3 py-2.5 font-medium ${p.rank === 1 ? 'text-yellow-300' : 'text-slate-100'}`}>
+                      <td className={`px-2 sm:px-3 py-2 font-medium whitespace-nowrap ${p.rank === 1 ? 'text-yellow-300' : 'text-slate-100'}`}>
                         {p.player_name}
                       </td>
-                      <td className="px-3 py-2.5">
+                      <td className="px-2 sm:px-3 py-2">
                         <FactionBadge name={p.faction_name} nameKo={p.faction_name_ko} />
                       </td>
-                      <td className="px-3 py-2.5 text-right text-slate-400">{p.total_score}</td>
-                      <td className="px-3 py-2.5 text-right text-slate-500">{p.bid_score}</td>
-                      <td className="px-5 py-2.5 text-right font-semibold text-slate-100">{p.final_score}</td>
+                      <td className="hidden sm:table-cell px-3 py-2 text-right text-slate-400">{p.total_score}</td>
+                      <td className="hidden sm:table-cell px-3 py-2 text-right text-slate-500">{p.bid_score}</td>
+                      <td className="px-3 sm:px-5 py-2 text-right font-semibold text-slate-100">{p.final_score}</td>
                     </tr>
                   ))
                 })}

@@ -14,16 +14,8 @@ export default function MatchDetail() {
   useEffect(() => {
     async function load() {
       const [resultsRes, matchRes] = await Promise.all([
-        supabase
-          .from('match_results_view')
-          .select('*')
-          .eq('match_id', id)
-          .order('rank'),
-        supabase
-          .from('matches')
-          .select('*')
-          .eq('id', id)
-          .single(),
+        supabase.from('match_results_view').select('*').eq('match_id', id).order('rank'),
+        supabase.from('matches').select('*').eq('id', id).single(),
       ])
       setResults(resultsRes.data ?? [])
       setMatch(matchRes.data)
@@ -38,28 +30,26 @@ export default function MatchDetail() {
   const winner = results.find(r => r.rank === 1)
 
   return (
-    <div className="space-y-6 max-w-2xl">
-      <div className="flex items-center gap-3">
-        <Link to="/matches" className="text-slate-500 hover:text-slate-300 text-sm transition-colors">
-          ← 목록으로
-        </Link>
-      </div>
+    <div className="space-y-5 max-w-2xl">
+      <Link to="/matches" className="text-slate-500 hover:text-slate-300 text-sm transition-colors">
+        ← 목록으로
+      </Link>
 
       <div>
-        <h1 className="text-2xl font-bold text-slate-100">{match.played_at} 게임</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-slate-100">{match.played_at} 게임</h1>
         {match.memo && <p className="text-slate-400 text-sm mt-1">{match.memo}</p>}
       </div>
 
       {winner && (
-        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl px-5 py-4 flex items-center gap-3">
-          <span className="text-2xl">🏆</span>
-          <div>
+        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl px-4 py-3 flex items-center gap-3">
+          <span className="text-xl">🏆</span>
+          <div className="flex-1 min-w-0">
             <p className="text-yellow-300 font-semibold">{winner.player_name}</p>
-            <p className="text-yellow-400/70 text-sm">
+            <p className="text-yellow-400/70 text-xs sm:text-sm">
               최종 {winner.final_score}점 (총합 {winner.total_score} − 비딩 {winner.bid_score})
             </p>
           </div>
-          <FactionBadge name={winner.faction_name} nameKo={winner.faction_name_ko} className="ml-auto" />
+          <FactionBadge name={winner.faction_name} nameKo={winner.faction_name_ko} className="shrink-0" />
         </div>
       )}
 
@@ -67,37 +57,34 @@ export default function MatchDetail() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-slate-800">
-              <th className="text-left px-5 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">순위</th>
-              <th className="text-left px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">플레이어</th>
-              <th className="text-left px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">종족</th>
-              <th className="text-right px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">비딩</th>
-              <th className="text-right px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">총합</th>
-              <th className="text-right px-5 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">최종</th>
+              <th className="text-left px-3 sm:px-5 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">순위</th>
+              <th className="text-left px-2 sm:px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">플레이어</th>
+              <th className="text-left px-2 sm:px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">종족</th>
+              <th className="hidden sm:table-cell text-right px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">비딩</th>
+              <th className="hidden sm:table-cell text-right px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">총합</th>
+              <th className="text-right px-3 sm:px-5 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">최종</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-800/60">
             {results.map(r => (
-              <tr
-                key={r.player_name}
-                className={r.rank === 1 ? 'bg-yellow-500/5' : 'hover:bg-slate-800/30'}
-              >
-                <td className="px-5 py-3.5">
+              <tr key={r.player_name} className={r.rank === 1 ? 'bg-yellow-500/5' : 'hover:bg-slate-800/30'}>
+                <td className="px-3 sm:px-5 py-3">
                   <RankBadge rank={r.rank} />
                 </td>
-                <td className="px-4 py-3.5">
+                <td className="px-2 sm:px-4 py-3">
                   <Link
                     to={`/players/${r.player_id}`}
-                    className={`font-medium hover:underline ${r.rank === 1 ? 'text-yellow-300' : 'text-slate-100'}`}
+                    className={`font-medium hover:underline whitespace-nowrap ${r.rank === 1 ? 'text-yellow-300' : 'text-slate-100'}`}
                   >
                     {r.player_name}
                   </Link>
                 </td>
-                <td className="px-4 py-3.5">
+                <td className="px-2 sm:px-4 py-3">
                   <FactionBadge name={r.faction_name} nameKo={r.faction_name_ko} />
                 </td>
-                <td className="px-4 py-3.5 text-right text-slate-400">{r.bid_score}</td>
-                <td className="px-4 py-3.5 text-right text-slate-300">{r.total_score}</td>
-                <td className="px-5 py-3.5 text-right font-semibold text-slate-100">{r.final_score}</td>
+                <td className="hidden sm:table-cell px-4 py-3 text-right text-slate-400">{r.bid_score}</td>
+                <td className="hidden sm:table-cell px-4 py-3 text-right text-slate-300">{r.total_score}</td>
+                <td className="px-3 sm:px-5 py-3 text-right font-semibold text-slate-100">{r.final_score}</td>
               </tr>
             ))}
           </tbody>

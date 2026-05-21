@@ -147,96 +147,74 @@ export default function NewMatch() {
 
         {/* Player slots */}
         <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-          <div className="px-5 py-3.5 border-b border-slate-800">
+          <div className="px-4 py-3.5 border-b border-slate-800">
             <h2 className="text-sm font-semibold text-slate-200">플레이어 정보</h2>
           </div>
 
-          {/* Header */}
-          <div className="grid grid-cols-[auto_1fr_1fr_80px_80px_60px_40px] gap-2 px-5 py-2 border-b border-slate-800/60 text-xs text-slate-500 uppercase tracking-wider">
-            <span className="w-8" />
-            <span>플레이어</span>
-            <span>종족</span>
-            <span className="text-right">비딩</span>
-            <span className="text-right">총합</span>
-            <span className="text-right">최종</span>
-            <span className="text-center">순위</span>
-          </div>
-
           <div className="divide-y divide-slate-800/60">
-            {slots.map((slot, i) => {
-              const faction = factions.find(f => f.id === parseInt(slot.factionId))
-              return (
-                <div key={i} className="grid grid-cols-[auto_1fr_1fr_80px_80px_60px_40px] gap-2 items-center px-5 py-3">
-                  <span className="w-8 text-xs text-slate-600 font-medium">{i + 1}</span>
-
-                  {/* Player select */}
+            {slots.map((slot, i) => (
+              <div key={i} className="px-4 py-3 space-y-2">
+                {/* 행 1: 번호 + 플레이어 + 종족 */}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-slate-600 font-medium w-5 shrink-0">{i + 1}</span>
                   <select
                     value={slot.playerId}
                     onChange={e => updateSlot(i, 'playerId', e.target.value)}
-                    className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-violet-500"
+                    className="flex-1 min-w-0 bg-slate-800 border border-slate-700 rounded-lg px-2 py-2 text-sm text-slate-100 focus:outline-none focus:border-violet-500"
                   >
-                    <option value="">-- 선택 --</option>
+                    <option value="">플레이어 선택</option>
                     {players.map(p => (
-                      <option
-                        key={p.id}
-                        value={p.id}
-                        disabled={usedPlayerIds.includes(p.id) && slot.playerId !== p.id}
-                      >
+                      <option key={p.id} value={p.id} disabled={usedPlayerIds.includes(p.id) && slot.playerId !== p.id}>
                         {p.name}
                       </option>
                     ))}
                   </select>
-
-                  {/* Faction select */}
                   <select
                     value={slot.factionId}
                     onChange={e => updateSlot(i, 'factionId', e.target.value)}
-                    className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-violet-500"
+                    className="flex-1 min-w-0 bg-slate-800 border border-slate-700 rounded-lg px-2 py-2 text-sm text-slate-100 focus:outline-none focus:border-violet-500"
                   >
-                    <option value="">-- 선택 --</option>
+                    <option value="">종족 선택</option>
                     {factions.map(f => (
-                      <option
-                        key={f.id}
-                        value={f.id}
-                        disabled={usedFactionIds.includes(String(f.id)) && slot.factionId !== String(f.id)}
-                      >
+                      <option key={f.id} value={f.id} disabled={usedFactionIds.includes(String(f.id)) && slot.factionId !== String(f.id)}>
                         {f.name_ko}
                       </option>
                     ))}
                   </select>
-
-                  {/* Bid score */}
-                  <input
-                    type="number"
-                    min="0"
-                    value={slot.bidScore}
-                    onChange={e => updateSlot(i, 'bidScore', e.target.value)}
-                    placeholder="0"
-                    className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-sm text-slate-100 text-right w-full focus:outline-none focus:border-violet-500"
-                  />
-
-                  {/* Total score */}
-                  <input
-                    type="number"
-                    min="0"
-                    value={slot.totalScore}
-                    onChange={e => updateSlot(i, 'totalScore', e.target.value)}
-                    placeholder="0"
-                    className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-sm text-slate-100 text-right w-full focus:outline-none focus:border-violet-500"
-                  />
-
-                  {/* Final score (computed) */}
-                  <div className="text-right text-sm font-semibold text-violet-300">
-                    {slot.totalScore !== '' ? computed[i].final : '-'}
+                </div>
+                {/* 행 2: 비딩 + 총합 + 최종 + 순위 */}
+                <div className="flex items-center gap-2 pl-7">
+                  <div className="flex-1">
+                    <p className="text-xs text-slate-500 mb-1">비딩</p>
+                    <input
+                      type="number" min="0" value={slot.bidScore} placeholder="0"
+                      onChange={e => updateSlot(i, 'bidScore', e.target.value)}
+                      className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-2 text-sm text-slate-100 text-right focus:outline-none focus:border-violet-500"
+                    />
                   </div>
-
-                  {/* Rank (computed) */}
-                  <div className="flex justify-center">
-                    {slot.totalScore !== '' ? <RankBadge rank={ranks[i]} /> : <span className="text-slate-700 text-sm">-</span>}
+                  <div className="flex-1">
+                    <p className="text-xs text-slate-500 mb-1">총합</p>
+                    <input
+                      type="number" min="0" value={slot.totalScore} placeholder="0"
+                      onChange={e => updateSlot(i, 'totalScore', e.target.value)}
+                      className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-2 text-sm text-slate-100 text-right focus:outline-none focus:border-violet-500"
+                    />
+                  </div>
+                  <div className="w-14 text-center">
+                    <p className="text-xs text-slate-500 mb-1">최종</p>
+                    <p className="text-sm font-semibold text-violet-300 py-2">
+                      {slot.totalScore !== '' ? computed[i].final : '-'}
+                    </p>
+                  </div>
+                  <div className="w-10 text-center">
+                    <p className="text-xs text-slate-500 mb-1">순위</p>
+                    <div className="flex justify-center py-1">
+                      {slot.totalScore !== '' ? <RankBadge rank={ranks[i]} /> : <span className="text-slate-700">-</span>}
+                    </div>
                   </div>
                 </div>
-              )
-            })}
+              </div>
+            ))}
           </div>
 
           {/* Preview summary */}

@@ -15,13 +15,13 @@ const CHART_STYLE = {
 }
 
 const SORT_OPTIONS = [
-  { key: 'pick_count',      label: '픽 수',       desc: true },
-  { key: 'win_rate',        label: '승률',        desc: true },
-  { key: 'wins',            label: '우승 수',     desc: true },
-  { key: 'avg_total_score', label: '평균 총점수', desc: true },
-  { key: 'avg_final_score', label: '평균 최종점수', desc: true },
-  { key: 'avg_bid_score',   label: '평균 비딩',   desc: true },
-  { key: 'avg_rank',        label: '평균 순위',   desc: false },
+  { key: 'pick_count',      label: '픽 수',       desc: true,  mobile: true  },
+  { key: 'win_rate',        label: '승률',        desc: true,  mobile: true  },
+  { key: 'wins',            label: '우승 수',     desc: true,  mobile: false },
+  { key: 'avg_total_score', label: '평균 총점수', desc: true,  mobile: false },
+  { key: 'avg_final_score', label: '평균 최종점수', desc: true, mobile: true  },
+  { key: 'avg_bid_score',   label: '평균 비딩',   desc: true,  mobile: false },
+  { key: 'avg_rank',        label: '평균 순위',   desc: false, mobile: false },
 ]
 
 export default function Factions() {
@@ -61,9 +61,9 @@ export default function Factions() {
   if (loading) return <LoadingSpinner />
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-100">종족 통계</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-slate-100">종족 통계</h1>
         <p className="text-slate-400 text-sm mt-1">총 {factions.length}종족</p>
       </div>
 
@@ -96,11 +96,11 @@ export default function Factions() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-800">
-                <th className="text-left px-5 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">종족</th>
+                <th className="text-left px-3 sm:px-5 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">종족</th>
                 {SORT_OPTIONS.map(opt => (
                   <th
                     key={opt.key}
-                    className="text-right px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium cursor-pointer hover:text-violet-300 transition-colors select-none"
+                    className={`text-right px-2 sm:px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium cursor-pointer hover:text-violet-300 transition-colors select-none ${opt.mobile ? '' : 'hidden sm:table-cell'}`}
                     onClick={() => handleSort(opt.key, opt.desc)}
                   >
                     {opt.label}
@@ -114,16 +114,16 @@ export default function Factions() {
             <tbody className="divide-y divide-slate-800/60">
               {sorted.filter(f => f.pick_count > 0).map(f => (
                 <tr key={f.faction_id} className="hover:bg-slate-800/40 transition-colors">
-                  <td className="px-5 py-3.5">
+                  <td className="px-3 sm:px-5 py-3">
                     <FactionBadge name={f.faction_name} nameKo={f.faction_name_ko} />
                   </td>
-                  <td className="px-4 py-3.5 text-right text-slate-300">{f.pick_count}</td>
-                  <td className="px-4 py-3.5 text-right text-violet-400 font-medium">{f.win_rate}%</td>
-                  <td className="px-4 py-3.5 text-right text-slate-300">{f.wins}</td>
-                  <td className="px-4 py-3.5 text-right text-slate-300">{f.avg_total_score}</td>
-                  <td className="px-4 py-3.5 text-right text-slate-300">{f.avg_final_score}</td>
-                  <td className="px-4 py-3.5 text-right text-slate-300">{f.avg_bid_score}</td>
-                  <td className="px-4 py-3.5 text-right text-slate-300">{f.avg_rank}</td>
+                  <td className="px-2 sm:px-4 py-3 text-right text-slate-300">{f.pick_count}</td>
+                  <td className="px-2 sm:px-4 py-3 text-right text-violet-400 font-medium">{f.win_rate}%</td>
+                  <td className="hidden sm:table-cell px-2 sm:px-4 py-3 text-right text-slate-300">{f.wins}</td>
+                  <td className="hidden sm:table-cell px-2 sm:px-4 py-3 text-right text-slate-300">{f.avg_total_score}</td>
+                  <td className="px-2 sm:px-4 py-3 text-right text-slate-300">{f.avg_final_score}</td>
+                  <td className="hidden sm:table-cell px-2 sm:px-4 py-3 text-right text-slate-300">{f.avg_bid_score}</td>
+                  <td className="hidden sm:table-cell px-2 sm:px-4 py-3 text-right text-slate-300">{f.avg_rank}</td>
                 </tr>
               ))}
             </tbody>
