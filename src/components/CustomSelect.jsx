@@ -1,26 +1,54 @@
+import { createPortal } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
 
-// options: [{ value, label, color? }]
+// options: [{ value, label, color?, disabled? }]
 // disabledValues: string[]
 export default function CustomSelect({ value, onChange, options, placeholder = '선택', disabledValues = [] }) {
   const [open, setOpen] = useState(false)
-  const ref = useRef(null)
+  const [pos, setPos] = useState({})
+  const triggerRef = useRef(null)
+  const dropdownRef = useRef(null)
 
   const selected = options.find(o => String(o.value) === String(value))
 
-  useEffect(() => {
-    function handlePointerDown(e) {
-      if (ref.current && !ref.current.contains(e.target)) setOpen(false)
+  function calcPos() {
+    if (!triggerRef.current) return
+    const r = triggerRef.current.getBoundingClientRect()
+    const spaceBelow = window.innerHeight - r.bottom
+    const approxHeight = Math.min(256, options.length * 40)
+    if (spaceBelow < approxHeight && r.top > approxHeight) {
+      setPos({ bottom: window.innerHeight - r.top + 4, top: undefined, left: r.left, width: r.width })
+    } else {
+      setPos({ top: r.bottom + 4, bottom: undefined, left: r.left, width: r.width })
     }
-    document.addEventListener('pointerdown', handlePointerDown)
-    return () => document.removeEventListener('pointerdown', handlePointerDown)
-  }, [])
+  }
+
+  function toggle() {
+    if (!open) calcPos()
+    setOpen(v => !v)
+  }
+
+  useEffect(() => {
+    if (!open) return
+    function onPointerDown(e) {
+      if (!triggerRef.current?.contains(e.target) && !dropdownRef.current?.contains(e.target))
+        setOpen(false)
+    }
+    function onScroll() { calcPos() }
+    document.addEventListener('pointerdown', onPointerDown)
+    window.addEventListener('scroll', onScroll, true)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown)
+      window.removeEventListener('scroll', onScroll, true)
+    }
+  }, [open])
 
   return (
-    <div ref={ref} className="relative flex-1 min-w-0">
+    <div className="relative flex-1 min-w-0">
       <button
+        ref={triggerRef}
         type="button"
-        onClick={() => setOpen(prev => !prev)}
+        onClick={toggle}
         className="w-full flex items-center gap-2 bg-slate-800 border border-slate-700 rounded-lg px-2 py-2 text-sm text-left focus:outline-none focus:border-violet-500"
       >
         {selected ? (
@@ -44,8 +72,19 @@ export default function CustomSelect({ value, onChange, options, placeholder = '
         </svg>
       </button>
 
-      {open && (
-        <div className="absolute z-50 mt-1 w-full bg-slate-800 border border-slate-700 rounded-lg shadow-xl overflow-y-auto max-h-64">
+      {open && createPortal(
+        <div
+          ref={dropdownRef}
+          style={{
+            position: 'fixed',
+            top: pos.top,
+            bottom: pos.bottom,
+            left: pos.left,
+            width: pos.width,
+            zIndex: 9999,
+          }}
+          className="bg-slate-800 border border-slate-700 rounded-lg shadow-xl overflow-y-auto max-h-64"
+        >
           {options.map(o => {
             const isDisabled = String(o.value) !== String(value) && (disabledValues.includes(String(o.value)) || o.disabled)
             const isSelected = String(o.value) === String(value)
@@ -72,7 +111,8 @@ export default function CustomSelect({ value, onChange, options, placeholder = '
               </button>
             )
           })}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
