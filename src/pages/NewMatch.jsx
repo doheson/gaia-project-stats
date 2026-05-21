@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { getFaction, getFactionColor } from '../lib/factions'
+import CustomSelect from '../components/CustomSelect'
 import FactionBadge from '../components/FactionBadge'
 import RankBadge from '../components/RankBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -152,35 +154,40 @@ export default function NewMatch() {
           </div>
 
           <div className="divide-y divide-slate-800/60">
-            {slots.map((slot, i) => (
+            {slots.map((slot, i) => {
+              const usedColorGroups = slots
+                .filter((_, idx) => idx !== i)
+                .map(s => {
+                  const f = factions.find(f => String(f.id) === String(s.factionId))
+                  return f ? getFaction(f.code)?.colorGroup : null
+                })
+                .filter(Boolean)
+
+              const factionOptions = factions.map(f => {
+                const color = getFactionColor(f.code)
+                const colorGroup = getFaction(f.code)?.colorGroup
+                return { value: f.id, label: f.name_ko, color, disabled: usedColorGroups.includes(colorGroup) }
+              })
+
+              return (
               <div key={i} className="px-4 py-3 space-y-2">
                 {/* 행 1: 번호 + 플레이어 + 종족 */}
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-slate-600 font-medium w-5 shrink-0">{i + 1}</span>
-                  <select
+                  <CustomSelect
                     value={slot.playerId}
-                    onChange={e => updateSlot(i, 'playerId', e.target.value)}
-                    className="flex-1 min-w-0 bg-slate-800 border border-slate-700 rounded-lg px-2 py-2 text-sm text-slate-100 focus:outline-none focus:border-violet-500"
-                  >
-                    <option value="">플레이어 선택</option>
-                    {players.map(p => (
-                      <option key={p.id} value={p.id} disabled={usedPlayerIds.includes(p.id) && slot.playerId !== p.id}>
-                        {p.name}
-                      </option>
-                    ))}
-                  </select>
-                  <select
+                    onChange={val => updateSlot(i, 'playerId', val)}
+                    options={players.map(p => ({ value: p.id, label: p.name }))}
+                    placeholder="플레이어 선택"
+                    disabledValues={usedPlayerIds}
+                  />
+                  <CustomSelect
                     value={slot.factionId}
-                    onChange={e => updateSlot(i, 'factionId', e.target.value)}
-                    className="flex-1 min-w-0 bg-slate-800 border border-slate-700 rounded-lg px-2 py-2 text-sm text-slate-100 focus:outline-none focus:border-violet-500"
-                  >
-                    <option value="">종족 선택</option>
-                    {factions.map(f => (
-                      <option key={f.id} value={f.id} disabled={usedFactionIds.includes(String(f.id)) && slot.factionId !== String(f.id)}>
-                        {f.name_ko}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={val => updateSlot(i, 'factionId', val)}
+                    options={factionOptions}
+                    placeholder="종족 선택"
+                    disabledValues={usedFactionIds}
+                  />
                 </div>
                 {/* 행 2: 비딩 + 총합 + 최종 + 순위 */}
                 <div className="flex items-center gap-2 pl-7">
@@ -214,7 +221,8 @@ export default function NewMatch() {
                   </div>
                 </div>
               </div>
-            ))}
+            )
+          })}
           </div>
 
           {/* Preview summary */}
