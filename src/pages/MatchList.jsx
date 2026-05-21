@@ -62,21 +62,22 @@ export default function MatchList() {
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm min-w-[480px]">
+              <table className="w-full text-xs sm:text-sm">
                 <thead>
                   <tr className="border-b border-slate-700">
-                    <th className="text-left px-2 sm:px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-20">날짜</th>
-                    <th className="text-center px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-10">순위</th>
-                    <th className="text-left px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">플레이어</th>
-                    <th className="text-left px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">종족</th>
-                    <th className="text-right px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-14">총점</th>
-                    <th className="text-right px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-14">비딩</th>
-                    <th className="text-right px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-14">최종</th>
+                    <th className="text-left px-2 sm:px-4 py-2 sm:py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">날짜</th>
+                    <th className="text-center px-1 sm:px-3 py-2 sm:py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">순위</th>
+                    <th className="text-left px-1 sm:px-3 py-2 sm:py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">플레이어</th>
+                    <th className="text-left px-1 sm:px-3 py-2 sm:py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">종족</th>
+                    <th className="text-right px-1 sm:px-3 py-2 sm:py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">총점</th>
+                    <th className="text-right px-1 sm:px-3 py-2 sm:py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">비딩</th>
+                    <th className="text-right px-2 sm:px-4 py-2 sm:py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">최종</th>
                   </tr>
                 </thead>
                 <tbody>
                   {matches.map(match => {
                     const sorted = [...match.players].sort((a, b) => a.rank - b.rank)
+                    const [dy, dm, dd] = (match.played_at ?? '').split('-')
                     return sorted.map((p, i) => (
                       <tr
                         key={`${match.match_id}-${p.player_name}`}
@@ -87,35 +88,39 @@ export default function MatchList() {
                         `}
                       >
                         {i === 0 ? (
-                          <td className="px-2 sm:px-4 py-2 align-top pt-3" rowSpan={sorted.length}>
+                          <td className="px-2 sm:px-4 py-1.5 sm:py-2 align-top pt-2 sm:pt-3" rowSpan={sorted.length}>
                             <Link
                               to={`/matches/${match.match_id}`}
-                              className="text-xs text-slate-300 hover:text-violet-300 transition-colors block whitespace-nowrap"
+                              className="text-slate-300 hover:text-violet-300 transition-colors block"
                             >
-                              {match.played_at}
+                              <span className="sm:hidden leading-tight">
+                                <span className="block">{dy?.slice(2)}</span>
+                                <span className="block">{dm}</span>
+                                <span className="block">{dd}</span>
+                              </span>
+                              <span className="hidden sm:inline whitespace-nowrap">{match.played_at}</span>
                             </Link>
                             {match.memo && (
-                              <span className="text-xs text-slate-600 block mt-0.5 max-w-[80px] truncate">{match.memo}</span>
+                              <span className="text-slate-600 block mt-0.5 max-w-[60px] sm:max-w-[80px] truncate">{match.memo}</span>
                             )}
                           </td>
                         ) : null}
-                        <td className="px-3 py-2 text-center"><RankBadge rank={p.rank} /></td>
-                        <td className={`px-3 py-2 font-medium whitespace-nowrap ${p.rank === 1 ? 'text-yellow-300' : 'text-slate-100'}`}>
+                        <td className="px-1 sm:px-3 py-1.5 sm:py-2 text-center"><RankBadge rank={p.rank} /></td>
+                        <td className={`px-1 sm:px-3 py-1.5 sm:py-2 font-medium whitespace-nowrap ${p.rank === 1 ? 'text-yellow-300' : 'text-slate-100'}`}>
                           {p.player_name}
                         </td>
-                        <td className="px-3 py-2">
+                        <td className="px-1 sm:px-3 py-1.5 sm:py-2">
                           <FactionBadge name={p.faction_name} nameKo={p.faction_name_ko} />
                         </td>
-                        <td className="px-3 py-2 text-right text-slate-400">{p.total_score}</td>
-                        <td className="px-3 py-2 text-right text-slate-500">{p.bid_score}</td>
-                        <td className="px-4 py-2 text-right font-semibold text-slate-100">{p.final_score}</td>
+                        <td className="px-1 sm:px-3 py-1.5 sm:py-2 text-right text-slate-400">{p.total_score}</td>
+                        <td className="px-1 sm:px-3 py-1.5 sm:py-2 text-right text-slate-500">{p.bid_score}</td>
+                        <td className="px-2 sm:px-4 py-1.5 sm:py-2 text-right font-semibold text-slate-100">{p.final_score}</td>
                       </tr>
                     ))
                   })}
                 </tbody>
               </table>
             </div>
-            <p className="sm:hidden text-xs text-slate-600 text-right px-4 py-2">← 좌우로 스크롤</p>
           </>
         )}
       </div>
