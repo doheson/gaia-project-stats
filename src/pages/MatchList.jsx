@@ -65,7 +65,7 @@ export default function MatchList() {
               <table className="w-full text-sm min-w-[480px]">
                 <thead>
                   <tr className="border-b border-slate-700">
-                    <th className="text-left px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-24">날짜</th>
+                    <th className="text-left px-2 sm:px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-20">날짜</th>
                     <th className="text-center px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-10">순위</th>
                     <th className="text-left px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">플레이어</th>
                     <th className="text-left px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">종족</th>
@@ -87,7 +87,7 @@ export default function MatchList() {
                         `}
                       >
                         {i === 0 ? (
-                          <td className="px-4 py-2 align-top pt-3" rowSpan={sorted.length}>
+                          <td className="px-2 sm:px-4 py-2 align-top pt-3" rowSpan={sorted.length}>
                             <Link
                               to={`/matches/${match.match_id}`}
                               className="text-xs text-slate-300 hover:text-violet-300 transition-colors block whitespace-nowrap"
