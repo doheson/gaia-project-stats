@@ -54,41 +54,39 @@ export default function MatchDetail() {
       )}
 
       <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-slate-800">
-              <th className="text-left px-3 sm:px-5 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">순위</th>
-              <th className="text-left px-2 sm:px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">플레이어</th>
-              <th className="text-left px-2 sm:px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">종족</th>
-              <th className="hidden sm:table-cell text-right px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">비딩</th>
-              <th className="hidden sm:table-cell text-right px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">총합</th>
-              <th className="text-right px-3 sm:px-5 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">최종</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-800/60">
-            {results.map(r => (
-              <tr key={r.player_name} className={r.rank === 1 ? 'bg-yellow-500/5' : 'hover:bg-slate-800/30'}>
-                <td className="px-3 sm:px-5 py-3">
-                  <RankBadge rank={r.rank} />
-                </td>
-                <td className="px-2 sm:px-4 py-3">
-                  <Link
-                    to={`/players/${r.player_id}`}
-                    className={`font-medium hover:underline whitespace-nowrap ${r.rank === 1 ? 'text-yellow-300' : 'text-slate-100'}`}
-                  >
-                    {r.player_name}
-                  </Link>
-                </td>
-                <td className="px-2 sm:px-4 py-3">
-                  <FactionBadge name={r.faction_name} nameKo={r.faction_name_ko} />
-                </td>
-                <td className="hidden sm:table-cell px-4 py-3 text-right text-slate-400">{r.bid_score}</td>
-                <td className="hidden sm:table-cell px-4 py-3 text-right text-slate-300">{r.total_score}</td>
-                <td className="px-3 sm:px-5 py-3 text-right font-semibold text-slate-100">{r.final_score}</td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[420px]">
+            <thead>
+              <tr className="border-b border-slate-800">
+                <th className="text-left px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">순위</th>
+                <th className="text-left px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">플레이어</th>
+                <th className="text-left px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">종족</th>
+                <th className="text-right px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">비딩</th>
+                <th className="text-right px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">총합</th>
+                <th className="text-right px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">최종</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-800/60">
+              {results.map(r => (
+                <tr key={r.player_name} className={r.rank === 1 ? 'bg-yellow-500/5' : 'hover:bg-slate-800/30'}>
+                  <td className="px-4 py-3"><RankBadge rank={r.rank} /></td>
+                  <td className="px-3 py-3">
+                    <Link
+                      to={`/players/${r.player_id}`}
+                      className={`font-medium hover:underline whitespace-nowrap ${r.rank === 1 ? 'text-yellow-300' : 'text-slate-100'}`}
+                    >
+                      {r.player_name}
+                    </Link>
+                  </td>
+                  <td className="px-3 py-3"><FactionBadge name={r.faction_name} nameKo={r.faction_name_ko} /></td>
+                  <td className="px-3 py-3 text-right text-slate-400">{r.bid_score}</td>
+                  <td className="px-3 py-3 text-right text-slate-300">{r.total_score}</td>
+                  <td className="px-4 py-3 text-right font-semibold text-slate-100">{r.final_score}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   )

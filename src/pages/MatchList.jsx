@@ -53,17 +53,18 @@ export default function MatchList() {
         {matches.length === 0 ? (
           <p className="py-16 text-center text-slate-500">게임 기록이 없습니다</p>
         ) : (
+          <>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm min-w-[480px]">
               <thead>
                 <tr className="border-b border-slate-700">
-                  <th className="text-left px-3 sm:px-5 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-24">날짜</th>
-                  <th className="text-center px-2 sm:px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-10">순위</th>
-                  <th className="text-left px-2 sm:px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">플레이어</th>
-                  <th className="text-left px-2 sm:px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">종족</th>
-                  <th className="hidden sm:table-cell text-right px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-14">총점</th>
-                  <th className="hidden sm:table-cell text-right px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-14">비딩</th>
-                  <th className="text-right px-3 sm:px-5 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-14">최종</th>
+                  <th className="text-left px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-24">날짜</th>
+                  <th className="text-center px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-10">순위</th>
+                  <th className="text-left px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">플레이어</th>
+                  <th className="text-left px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">종족</th>
+                  <th className="text-right px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-14">총점</th>
+                  <th className="text-right px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-14">비딩</th>
+                  <th className="text-right px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium w-14">최종</th>
                 </tr>
               </thead>
               <tbody>
@@ -79,7 +80,7 @@ export default function MatchList() {
                       `}
                     >
                       {i === 0 ? (
-                        <td className="px-3 sm:px-5 py-2 align-top pt-3" rowSpan={sorted.length}>
+                        <td className="px-4 py-2 align-top pt-3" rowSpan={sorted.length}>
                           <Link
                             to={`/matches/${match.match_id}`}
                             className="text-xs text-slate-300 hover:text-violet-300 transition-colors block whitespace-nowrap"
@@ -91,24 +92,24 @@ export default function MatchList() {
                           )}
                         </td>
                       ) : null}
-                      <td className="px-2 sm:px-3 py-2 text-center">
-                        <RankBadge rank={p.rank} />
-                      </td>
-                      <td className={`px-2 sm:px-3 py-2 font-medium whitespace-nowrap ${p.rank === 1 ? 'text-yellow-300' : 'text-slate-100'}`}>
+                      <td className="px-3 py-2 text-center"><RankBadge rank={p.rank} /></td>
+                      <td className={`px-3 py-2 font-medium whitespace-nowrap ${p.rank === 1 ? 'text-yellow-300' : 'text-slate-100'}`}>
                         {p.player_name}
                       </td>
-                      <td className="px-2 sm:px-3 py-2">
+                      <td className="px-3 py-2">
                         <FactionBadge name={p.faction_name} nameKo={p.faction_name_ko} />
                       </td>
-                      <td className="hidden sm:table-cell px-3 py-2 text-right text-slate-400">{p.total_score}</td>
-                      <td className="hidden sm:table-cell px-3 py-2 text-right text-slate-500">{p.bid_score}</td>
-                      <td className="px-3 sm:px-5 py-2 text-right font-semibold text-slate-100">{p.final_score}</td>
+                      <td className="px-3 py-2 text-right text-slate-400">{p.total_score}</td>
+                      <td className="px-3 py-2 text-right text-slate-500">{p.bid_score}</td>
+                      <td className="px-4 py-2 text-right font-semibold text-slate-100">{p.final_score}</td>
                     </tr>
                   ))
                 })}
               </tbody>
             </table>
           </div>
+          <p className="sm:hidden text-xs text-slate-600 text-right px-4 py-2">← 좌우로 스크롤</p>
+          </>
         )}
       </div>
     </div>

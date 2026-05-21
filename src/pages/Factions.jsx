@@ -93,14 +93,14 @@ export default function Factions() {
       {/* Table */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-[640px]">
             <thead>
               <tr className="border-b border-slate-800">
-                <th className="text-left px-3 sm:px-5 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">종족</th>
+                <th className="text-left px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">종족</th>
                 {SORT_OPTIONS.map(opt => (
                   <th
                     key={opt.key}
-                    className={`text-right px-2 sm:px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium cursor-pointer hover:text-violet-300 transition-colors select-none ${opt.mobile ? '' : 'hidden sm:table-cell'}`}
+                    className="text-right px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium cursor-pointer hover:text-violet-300 transition-colors select-none whitespace-nowrap"
                     onClick={() => handleSort(opt.key, opt.desc)}
                   >
                     {opt.label}
@@ -114,21 +114,22 @@ export default function Factions() {
             <tbody className="divide-y divide-slate-800/60">
               {sorted.filter(f => f.pick_count > 0).map(f => (
                 <tr key={f.faction_id} className="hover:bg-slate-800/40 transition-colors">
-                  <td className="px-3 sm:px-5 py-3">
+                  <td className="px-4 py-3">
                     <FactionBadge name={f.faction_name} nameKo={f.faction_name_ko} />
                   </td>
-                  <td className="px-2 sm:px-4 py-3 text-right text-slate-300">{f.pick_count}</td>
-                  <td className="px-2 sm:px-4 py-3 text-right text-violet-400 font-medium">{f.win_rate}%</td>
-                  <td className="hidden sm:table-cell px-2 sm:px-4 py-3 text-right text-slate-300">{f.wins}</td>
-                  <td className="hidden sm:table-cell px-2 sm:px-4 py-3 text-right text-slate-300">{f.avg_total_score}</td>
-                  <td className="px-2 sm:px-4 py-3 text-right text-slate-300">{f.avg_final_score}</td>
-                  <td className="hidden sm:table-cell px-2 sm:px-4 py-3 text-right text-slate-300">{f.avg_bid_score}</td>
-                  <td className="hidden sm:table-cell px-2 sm:px-4 py-3 text-right text-slate-300">{f.avg_rank}</td>
+                  <td className="px-3 py-3 text-right text-slate-300">{f.pick_count}</td>
+                  <td className="px-3 py-3 text-right text-violet-400 font-medium">{f.win_rate}%</td>
+                  <td className="px-3 py-3 text-right text-slate-300">{f.wins}</td>
+                  <td className="px-3 py-3 text-right text-slate-300">{f.avg_total_score}</td>
+                  <td className="px-3 py-3 text-right text-slate-300">{f.avg_final_score}</td>
+                  <td className="px-3 py-3 text-right text-slate-300">{f.avg_bid_score}</td>
+                  <td className="px-3 py-3 text-right text-slate-300">{f.avg_rank}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+        <p className="sm:hidden text-xs text-slate-600 text-right px-4 py-2">← 좌우로 스크롤</p>
       </div>
     </div>
   )

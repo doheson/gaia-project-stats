@@ -4,11 +4,11 @@ import { supabase } from '../lib/supabase'
 import LoadingSpinner from '../components/LoadingSpinner'
 
 const SORT_OPTIONS = [
-  { key: 'wins',            label: '우승 수',       desc: true,  mobile: false },
-  { key: 'win_rate',        label: '승률',          desc: true,  mobile: true  },
-  { key: 'total_games',     label: '게임 수',       desc: true,  mobile: false },
-  { key: 'avg_final_score', label: '평균 최종점수',  desc: true,  mobile: true  },
-  { key: 'avg_rank',        label: '평균 순위',     desc: false, mobile: false },
+  { key: 'wins',            label: '우승 수',      desc: true  },
+  { key: 'win_rate',        label: '승률',         desc: true  },
+  { key: 'total_games',     label: '게임 수',      desc: true  },
+  { key: 'avg_final_score', label: '평균 최종점수', desc: true  },
+  { key: 'avg_rank',        label: '평균 순위',    desc: false },
 ]
 
 export default function Players() {
@@ -47,15 +47,15 @@ export default function Players() {
 
       <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-[560px]">
             <thead>
               <tr className="border-b border-slate-800">
-                <th className="text-left px-3 sm:px-5 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">#</th>
-                <th className="text-left px-2 sm:px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">플레이어</th>
+                <th className="text-left px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">#</th>
+                <th className="text-left px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">플레이어</th>
                 {SORT_OPTIONS.map(opt => (
                   <th
                     key={opt.key}
-                    className={`text-right px-2 sm:px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium cursor-pointer hover:text-violet-300 transition-colors select-none ${opt.mobile ? '' : 'hidden sm:table-cell'}`}
+                    className="text-right px-3 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium cursor-pointer hover:text-violet-300 transition-colors select-none whitespace-nowrap"
                     onClick={() => handleSort(opt.key, opt.desc)}
                   >
                     {opt.label}
@@ -64,14 +64,14 @@ export default function Players() {
                     )}
                   </th>
                 ))}
-                <th className="hidden sm:table-cell text-right px-3 sm:px-5 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">최고점</th>
+                <th className="text-right px-4 py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">최고점</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60">
               {sorted.map((p, i) => (
                 <tr key={p.player_id} className="hover:bg-slate-800/40 transition-colors">
-                  <td className="px-3 sm:px-5 py-3 text-slate-600">{i + 1}</td>
-                  <td className="px-2 sm:px-4 py-3">
+                  <td className="px-4 py-3 text-slate-600">{i + 1}</td>
+                  <td className="px-3 py-3">
                     <Link
                       to={`/players/${p.player_id}`}
                       className="font-medium text-slate-100 hover:text-violet-300 transition-colors whitespace-nowrap"
@@ -79,17 +79,18 @@ export default function Players() {
                       {p.player_name}
                     </Link>
                   </td>
-                  <td className="hidden sm:table-cell px-2 sm:px-4 py-3 text-right text-slate-300">{p.wins}</td>
-                  <td className="px-2 sm:px-4 py-3 text-right text-violet-400 font-medium">{p.win_rate}%</td>
-                  <td className="hidden sm:table-cell px-2 sm:px-4 py-3 text-right text-slate-300">{p.total_games}</td>
-                  <td className="px-2 sm:px-4 py-3 text-right text-slate-300">{p.avg_final_score}</td>
-                  <td className="hidden sm:table-cell px-2 sm:px-4 py-3 text-right text-slate-300">{p.avg_rank}</td>
-                  <td className="hidden sm:table-cell px-3 sm:px-5 py-3 text-right text-slate-100 font-medium">{p.best_score}</td>
+                  <td className="px-3 py-3 text-right text-slate-300">{p.wins}</td>
+                  <td className="px-3 py-3 text-right text-violet-400 font-medium">{p.win_rate}%</td>
+                  <td className="px-3 py-3 text-right text-slate-300">{p.total_games}</td>
+                  <td className="px-3 py-3 text-right text-slate-300">{p.avg_final_score}</td>
+                  <td className="px-3 py-3 text-right text-slate-300">{p.avg_rank}</td>
+                  <td className="px-4 py-3 text-right text-slate-100 font-medium">{p.best_score}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+        <p className="sm:hidden text-xs text-slate-600 text-right px-4 py-2">← 좌우로 스크롤</p>
       </div>
     </div>
   )
