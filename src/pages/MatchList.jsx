@@ -65,7 +65,7 @@ export default function MatchList() {
               <table className="w-full text-xs sm:text-sm">
                 <thead>
                   <tr className="border-b border-slate-700">
-                    <th className="text-left px-2 sm:px-4 py-2 sm:py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">날짜</th>
+                    <th className="text-center sm:text-left px-2 sm:px-4 py-2 sm:py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">날짜</th>
                     <th className="text-center px-1 sm:px-3 py-2 sm:py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">순위</th>
                     <th className="text-left px-1 sm:px-3 py-2 sm:py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">플레이어</th>
                     <th className="text-left px-1 sm:px-3 py-2 sm:py-3 text-xs text-slate-400 uppercase tracking-wider font-medium">종족</th>
@@ -88,14 +88,16 @@ export default function MatchList() {
                         `}
                       >
                         {i === 0 ? (
-                          <td className="px-2 sm:px-4 py-1.5 sm:py-2 align-top pt-2 sm:pt-3" rowSpan={sorted.length}>
+                          <td className="px-2 sm:px-4 py-1.5 sm:py-2 align-top pt-2 sm:pt-3 text-center sm:text-left" rowSpan={sorted.length}>
                             <Link
                               to={`/matches/${match.match_id}`}
                               className="text-slate-300 hover:text-violet-300 transition-colors block"
                             >
-                              <span className="sm:hidden leading-tight">
+                              <span className="sm:hidden leading-tight text-center">
                                 <span className="block">{dy?.slice(2)}</span>
+                                <span className="block text-slate-600">-</span>
                                 <span className="block">{dm}</span>
+                                <span className="block text-slate-600">-</span>
                                 <span className="block">{dd}</span>
                               </span>
                               <span className="hidden sm:inline whitespace-nowrap">{match.played_at}</span>
