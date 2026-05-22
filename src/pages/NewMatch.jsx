@@ -9,7 +9,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 
 const today = new Date().toISOString().split('T')[0]
 
-const EMPTY_SLOT = { playerId: '', factionId: '', bidScore: '', totalScore: '' }
+const EMPTY_SLOT = { playerId: '', factionId: '', bidScore: '', finalScore: '' }
 
 export default function NewMatch() {
   const navigate = useNavigate()
@@ -38,8 +38,8 @@ export default function NewMatch() {
   // Computed values per slot
   const computed = slots.map(s => {
     const bid = parseInt(s.bidScore) || 0
-    const total = parseInt(s.totalScore) || 0
-    return { bid, total, final: total - bid }
+    const final = parseInt(s.finalScore) || 0
+    return { bid, final, total: bid + final }
   })
 
   // Auto-rank: sort by final desc, total desc as tiebreaker
@@ -68,7 +68,7 @@ export default function NewMatch() {
     if (new Set(pIds).size !== pIds.length) issues.push('중복된 플레이어가 있습니다')
     const fIds = slots.map(s => s.factionId).filter(Boolean)
     if (new Set(fIds).size !== fIds.length) issues.push('중복된 종족이 있습니다')
-    if (computed.some(c => !c.total)) issues.push('총합 점수를 모두 입력해주세요')
+    if (slots.some(s => s.finalScore === '')) issues.push('최종 점수를 모두 입력해주세요')
     return issues
   }
 
@@ -200,23 +200,23 @@ export default function NewMatch() {
                     />
                   </div>
                   <div className="flex-1">
-                    <p className="text-xs text-slate-500 mb-1">총합</p>
+                    <p className="text-xs text-slate-500 mb-1">최종</p>
                     <input
-                      type="number" min="0" value={slot.totalScore} placeholder="0"
-                      onChange={e => updateSlot(i, 'totalScore', e.target.value)}
+                      type="number" min="0" value={slot.finalScore} placeholder="0"
+                      onChange={e => updateSlot(i, 'finalScore', e.target.value)}
                       className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-2 text-sm text-slate-100 text-right focus:outline-none focus:border-violet-500"
                     />
                   </div>
                   <div className="w-14 text-center">
-                    <p className="text-xs text-slate-500 mb-1">최종</p>
+                    <p className="text-xs text-slate-500 mb-1">총합</p>
                     <p className="text-sm font-semibold text-violet-300 py-2">
-                      {slot.totalScore !== '' ? computed[i].final : '-'}
+                      {slot.finalScore !== '' ? computed[i].total : '-'}
                     </p>
                   </div>
                   <div className="w-10 text-center">
                     <p className="text-xs text-slate-500 mb-1">순위</p>
                     <div className="flex justify-center py-1">
-                      {slot.totalScore !== '' ? <RankBadge rank={ranks[i]} /> : <span className="text-slate-700">-</span>}
+                      {slot.finalScore !== '' ? <RankBadge rank={ranks[i]} /> : <span className="text-slate-700">-</span>}
                     </div>
                   </div>
                 </div>
@@ -226,7 +226,7 @@ export default function NewMatch() {
           </div>
 
           {/* Preview summary */}
-          {slots.every(s => s.totalScore !== '') && (
+          {slots.every(s => s.finalScore !== '') && (
             <div className="px-5 py-3 border-t border-slate-800 bg-slate-800/30">
               <div className="flex flex-wrap gap-2">
                 {[...Array(4)]

@@ -2,7 +2,7 @@ import { getFaction } from '../lib/factions'
 
 export default function FactionBadge({ name, nameKo: nameKoProp, className = '' }) {
   const faction = getFaction(name) || getFaction(nameKoProp)
-  const displayName = nameKoProp || faction?.nameKo || name || '?'
+  const displayName = faction?.nameKo || nameKoProp || name || '?'
   const color = faction?.color || '#64748b'
 
   return (
