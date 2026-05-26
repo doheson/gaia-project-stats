@@ -1,10 +1,11 @@
 import { NavLink, Outlet } from 'react-router-dom'
 
 const NAV = [
-  { to: '/',         label: '대시보드', end: true },
-  { to: '/matches',  label: '게임 목록' },
-  { to: '/players',  label: '플레이어' },
-  { to: '/factions', label: '종족 통계' },
+  { to: '/',              label: '대시보드', end: true },
+  { to: '/matches',       label: '게임 목록' },
+  { to: '/players',       label: '플레이어' },
+  { to: '/factions',      label: '종족 통계' },
+  { to: '/hall-of-fame',  label: '🏆 명예의 전당' },
 ]
 
 export default function Layout() {

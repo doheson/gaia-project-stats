@@ -6,6 +6,7 @@ import MatchDetail from './pages/MatchDetail'
 import Players from './pages/Players'
 import PlayerDetail from './pages/PlayerDetail'
 import Factions from './pages/Factions'
+import HallOfFame from './pages/HallOfFame'
 import NewMatch from './pages/NewMatch'
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="players" element={<Players />} />
           <Route path="players/:id" element={<PlayerDetail />} />
           <Route path="factions" element={<Factions />} />
+          <Route path="hall-of-fame" element={<HallOfFame />} />
           <Route path="new-match" element={<NewMatch />} />
         </Route>
       </Routes>
