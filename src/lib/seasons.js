@@ -1,16 +1,16 @@
 export function getCurrentSeason() {
   const now = new Date()
   const year = now.getFullYear()
-  const q = Math.ceil((now.getMonth() + 1) / 3)
-  return `${year}-Q${q}`
+  const s = now.getMonth() < 6 ? 1 : 2  // 0~5월 → 시즌1, 6~11월 → 시즌2
+  return `${year}-S${s}`
 }
 
 export function getSeasonRange(season) {
   if (season === 'all') return { start: null, end: null }
-  const [year, q] = season.split('-Q')
-  const qNum = parseInt(q)
-  const startMonth = (qNum - 1) * 3 + 1
-  const endMonth = startMonth + 2
+  const [year, s] = season.split('-S')
+  const sNum = parseInt(s)
+  const startMonth = sNum === 1 ? 1 : 7
+  const endMonth   = sNum === 1 ? 6 : 12
   const lastDay = new Date(parseInt(year), endMonth, 0).getDate()
   return {
     start: `${year}-${String(startMonth).padStart(2, '0')}-01`,
@@ -20,18 +20,18 @@ export function getSeasonRange(season) {
 
 export function getSeasonLabel(season) {
   if (season === 'all') return '전체 기록'
-  const [year, q] = season.split('-Q')
-  return `${String(year).slice(2)}-시즌${q}`
+  const [year, s] = season.split('-S')
+  return `${String(year).slice(2)}-시즌${s}`
 }
 
 export function getAvailableSeasons() {
   const current = getCurrentSeason()
-  const [curYear, curQ] = current.split('-Q').map(Number)
+  const [curYear, curS] = current.split('-S').map(Number)
   const seasons = []
   for (let year = 2025; year <= curYear; year++) {
-    const maxQ = year === curYear ? curQ : 4
-    for (let q = 1; q <= maxQ; q++) {
-      seasons.push(`${year}-Q${q}`)
+    const maxS = year === curYear ? curS : 2
+    for (let s = 1; s <= maxS; s++) {
+      seasons.push(`${year}-S${s}`)
     }
   }
   return seasons.reverse() // 최신순
