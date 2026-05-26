@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { applySeasonFilter, getSeasonLabel } from '../lib/seasons'
 import { aggregatePlayerStats } from '../lib/stats'
 import FactionBadge from '../components/FactionBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
+import SeasonFilter from '../components/SeasonFilter'
 
 function Medal({ rank }) {
   if (rank === 1) return <span className="text-lg">🥇</span>
@@ -20,6 +22,7 @@ function Th({ children, right }) {
 }
 
 export default function HallOfFame() {
+  const [season, setSeason] = useState('all')
   const [loading, setLoading] = useState(true)
   const [topTotal, setTopTotal]   = useState([])   // 종료점수 개인 top5
   const [topFinal, setTopFinal]   = useState([])   // 최종점수 개인 top5
@@ -30,21 +33,27 @@ export default function HallOfFame() {
     async function load() {
       setLoading(true)
 
-      const [totalRes, finalRes, allRes] = await Promise.all([
-        supabase
-          .from('match_results_view')
-          .select('player_name, faction_name, faction_name_ko, total_score, final_score, played_at')
-          .order('total_score', { ascending: false })
-          .limit(5),
-        supabase
-          .from('match_results_view')
-          .select('player_name, faction_name, faction_name_ko, total_score, final_score, played_at')
-          .order('final_score', { ascending: false })
-          .limit(5),
-        supabase
-          .from('match_results_view')
-          .select('player_id, player_name, faction_name, faction_name_ko, bid_score, total_score, final_score, rank'),
-      ])
+      let totalQuery = supabase
+        .from('match_results_view')
+        .select('player_name, faction_name, faction_name_ko, total_score, final_score, played_at')
+        .order('total_score', { ascending: false })
+        .limit(5)
+
+      let finalQuery = supabase
+        .from('match_results_view')
+        .select('player_name, faction_name, faction_name_ko, total_score, final_score, played_at')
+        .order('final_score', { ascending: false })
+        .limit(5)
+
+      let allQuery = supabase
+        .from('match_results_view')
+        .select('player_id, player_name, faction_name, faction_name_ko, bid_score, total_score, final_score, rank')
+
+      totalQuery = applySeasonFilter(totalQuery, season)
+      finalQuery = applySeasonFilter(finalQuery, season)
+      allQuery   = applySeasonFilter(allQuery, season)
+
+      const [totalRes, finalRes, allRes] = await Promise.all([totalQuery, finalQuery, allQuery])
 
       setTopTotal(totalRes.data ?? [])
       setTopFinal(finalRes.data ?? [])
@@ -83,139 +92,151 @@ export default function HallOfFame() {
       setLoading(false)
     }
     load()
-  }, [])
-
-  if (loading) return <LoadingSpinner />
+  }, [season])
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div>
-        <h1 className="text-xl sm:text-2xl font-bold text-slate-100">🏆 명예의 전당</h1>
-        <p className="text-slate-400 text-sm mt-1">전체 기간 최고 기록</p>
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-100">🏆 명예의 전당</h1>
+          <p className="text-slate-400 text-sm mt-1">{getSeasonLabel(season)} 최고 기록</p>
+        </div>
+        <SeasonFilter value={season} onChange={setSeason} />
       </div>
 
-      {/* 상단 3개 카드 */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {loading ? <LoadingSpinner /> : (
+        <>
+          {/* 상단 3개 카드 */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
-        {/* 종료점수 TOP5 */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-          <div className="px-5 py-3 border-b border-slate-800">
-            <h2 className="text-sm font-semibold text-slate-200">🎯 종료점수 TOP 5</h2>
+            {/* 종료점수 TOP5 */}
+            <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+              <div className="px-5 py-3 border-b border-slate-800">
+                <h2 className="text-sm font-semibold text-slate-200">🎯 종료점수 TOP 5</h2>
+              </div>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-slate-800">
+                    <Th>#</Th>
+                    <Th>플레이어</Th>
+                    <Th>종족</Th>
+                    <Th right>점수</Th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60">
+                  {topTotal.length === 0 ? (
+                    <tr><td colSpan={4} className="px-4 py-6 text-center text-slate-500 text-sm">기록 없음</td></tr>
+                  ) : topTotal.map((row, i) => (
+                    <tr key={i} className="hover:bg-slate-800/40 transition-colors">
+                      <td className="px-4 py-2.5"><Medal rank={i + 1} /></td>
+                      <td className="px-4 py-2.5 text-slate-200 font-medium whitespace-nowrap">{row.player_name}</td>
+                      <td className="px-4 py-2.5"><FactionBadge name={row.faction_name} nameKo={row.faction_name_ko} /></td>
+                      <td className="px-4 py-2.5 text-right font-bold text-amber-400">{row.total_score}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* 최종점수 TOP5 */}
+            <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+              <div className="px-5 py-3 border-b border-slate-800">
+                <h2 className="text-sm font-semibold text-slate-200">⚡ 최종점수 TOP 5</h2>
+              </div>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-slate-800">
+                    <Th>#</Th>
+                    <Th>플레이어</Th>
+                    <Th>종족</Th>
+                    <Th right>점수</Th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60">
+                  {topFinal.length === 0 ? (
+                    <tr><td colSpan={4} className="px-4 py-6 text-center text-slate-500 text-sm">기록 없음</td></tr>
+                  ) : topFinal.map((row, i) => (
+                    <tr key={i} className="hover:bg-slate-800/40 transition-colors">
+                      <td className="px-4 py-2.5"><Medal rank={i + 1} /></td>
+                      <td className="px-4 py-2.5 text-slate-200 font-medium whitespace-nowrap">{row.player_name}</td>
+                      <td className="px-4 py-2.5"><FactionBadge name={row.faction_name} nameKo={row.faction_name_ko} /></td>
+                      <td className="px-4 py-2.5 text-right font-bold text-violet-400">{row.final_score}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* 우승 횟수 TOP5 */}
+            <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+              <div className="px-5 py-3 border-b border-slate-800">
+                <h2 className="text-sm font-semibold text-slate-200">👑 우승 횟수 TOP 5</h2>
+              </div>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-slate-800">
+                    <Th>#</Th>
+                    <Th>플레이어</Th>
+                    <Th right>우승</Th>
+                    <Th right>승률</Th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60">
+                  {topWins.length === 0 ? (
+                    <tr><td colSpan={4} className="px-4 py-6 text-center text-slate-500 text-sm">기록 없음</td></tr>
+                  ) : topWins.map((p, i) => (
+                    <tr key={p.player_id} className="hover:bg-slate-800/40 transition-colors">
+                      <td className="px-4 py-2.5"><Medal rank={i + 1} /></td>
+                      <td className="px-4 py-2.5 text-slate-200 font-medium whitespace-nowrap">{p.player_name}</td>
+                      <td className="px-4 py-2.5 text-right font-bold text-yellow-400">{p.wins}회</td>
+                      <td className="px-4 py-2.5 text-right text-slate-300">{p.win_rate}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
           </div>
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-slate-800">
-                <Th>#</Th>
-                <Th>플레이어</Th>
-                <Th>종족</Th>
-                <Th right>점수</Th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60">
-              {topTotal.map((row, i) => (
-                <tr key={i} className="hover:bg-slate-800/40 transition-colors">
-                  <td className="px-4 py-2.5"><Medal rank={i + 1} /></td>
-                  <td className="px-4 py-2.5 text-slate-200 font-medium whitespace-nowrap">{row.player_name}</td>
-                  <td className="px-4 py-2.5"><FactionBadge name={row.faction_name} nameKo={row.faction_name_ko} /></td>
-                  <td className="px-4 py-2.5 text-right font-bold text-amber-400">{row.total_score}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
 
-        {/* 최종점수 TOP5 */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-          <div className="px-5 py-3 border-b border-slate-800">
-            <h2 className="text-sm font-semibold text-slate-200">⚡ 최종점수 TOP 5</h2>
+          {/* 하단: 종족별 최고 기록 통합 테이블 */}
+          <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+            <div className="px-5 py-3 border-b border-slate-800">
+              <h2 className="text-sm font-semibold text-slate-200">🌟 종족별 최고 기록</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm min-w-[560px]">
+                <thead>
+                  <tr className="border-b border-slate-800">
+                    <th className="text-left px-4 py-2.5 text-xs text-slate-500 font-medium">#</th>
+                    <th className="text-left px-4 py-2.5 text-xs text-slate-500 font-medium">종족</th>
+                    <th className="text-right px-4 py-2.5 text-xs text-amber-500/80 font-medium">최고 종료점수</th>
+                    <th className="text-left px-3 py-2.5 text-xs text-slate-600 font-medium">달성자</th>
+                    <th className="text-right px-4 py-2.5 text-xs text-violet-400/80 font-medium">최고 최종점수</th>
+                    <th className="text-left px-3 py-2.5 text-xs text-slate-600 font-medium">달성자</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60">
+                  {factionBest.length === 0 ? (
+                    <tr><td colSpan={6} className="px-4 py-6 text-center text-slate-500 text-sm">기록 없음</td></tr>
+                  ) : factionBest.map((f, i) => (
+                    <tr key={f.faction_name} className="hover:bg-slate-800/40 transition-colors">
+                      <td className="px-4 py-2.5 text-slate-500 text-xs">{i + 1}</td>
+                      <td className="px-4 py-2.5">
+                        <FactionBadge name={f.faction_name} nameKo={f.faction_name_ko} />
+                      </td>
+                      <td className="px-4 py-2.5 text-right font-bold text-amber-400">{f.best_total}</td>
+                      <td className="px-3 py-2.5 text-slate-400 text-xs whitespace-nowrap">{f.best_total_by}</td>
+                      <td className="px-4 py-2.5 text-right font-bold text-violet-400">{f.best_final ?? '-'}</td>
+                      <td className="px-3 py-2.5 text-slate-400 text-xs whitespace-nowrap">{f.best_final_by ?? '-'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="sm:hidden text-xs text-slate-600 text-right px-4 py-2">← 좌우로 스크롤</p>
           </div>
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-slate-800">
-                <Th>#</Th>
-                <Th>플레이어</Th>
-                <Th>종족</Th>
-                <Th right>점수</Th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60">
-              {topFinal.map((row, i) => (
-                <tr key={i} className="hover:bg-slate-800/40 transition-colors">
-                  <td className="px-4 py-2.5"><Medal rank={i + 1} /></td>
-                  <td className="px-4 py-2.5 text-slate-200 font-medium whitespace-nowrap">{row.player_name}</td>
-                  <td className="px-4 py-2.5"><FactionBadge name={row.faction_name} nameKo={row.faction_name_ko} /></td>
-                  <td className="px-4 py-2.5 text-right font-bold text-violet-400">{row.final_score}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* 우승 횟수 TOP5 */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-          <div className="px-5 py-3 border-b border-slate-800">
-            <h2 className="text-sm font-semibold text-slate-200">👑 우승 횟수 TOP 5</h2>
-          </div>
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-slate-800">
-                <Th>#</Th>
-                <Th>플레이어</Th>
-                <Th right>우승</Th>
-                <Th right>승률</Th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60">
-              {topWins.map((p, i) => (
-                <tr key={p.player_id} className="hover:bg-slate-800/40 transition-colors">
-                  <td className="px-4 py-2.5"><Medal rank={i + 1} /></td>
-                  <td className="px-4 py-2.5 text-slate-200 font-medium whitespace-nowrap">{p.player_name}</td>
-                  <td className="px-4 py-2.5 text-right font-bold text-yellow-400">{p.wins}회</td>
-                  <td className="px-4 py-2.5 text-right text-slate-300">{p.win_rate}%</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-      </div>
-
-      {/* 하단: 종족별 최고 기록 통합 테이블 */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-        <div className="px-5 py-3 border-b border-slate-800">
-          <h2 className="text-sm font-semibold text-slate-200">🌟 종족별 최고 기록</h2>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm min-w-[560px]">
-            <thead>
-              <tr className="border-b border-slate-800">
-                <th className="text-left px-4 py-2.5 text-xs text-slate-500 font-medium">#</th>
-                <th className="text-left px-4 py-2.5 text-xs text-slate-500 font-medium">종족</th>
-                <th className="text-right px-4 py-2.5 text-xs text-amber-500/80 font-medium">최고 종료점수</th>
-                <th className="text-left px-3 py-2.5 text-xs text-slate-600 font-medium">달성자</th>
-                <th className="text-right px-4 py-2.5 text-xs text-violet-400/80 font-medium">최고 최종점수</th>
-                <th className="text-left px-3 py-2.5 text-xs text-slate-600 font-medium">달성자</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60">
-              {factionBest.map((f, i) => (
-                <tr key={f.faction_name} className="hover:bg-slate-800/40 transition-colors">
-                  <td className="px-4 py-2.5 text-slate-500 text-xs">{i + 1}</td>
-                  <td className="px-4 py-2.5">
-                    <FactionBadge name={f.faction_name} nameKo={f.faction_name_ko} />
-                  </td>
-                  <td className="px-4 py-2.5 text-right font-bold text-amber-400">{f.best_total}</td>
-                  <td className="px-3 py-2.5 text-slate-400 text-xs whitespace-nowrap">{f.best_total_by}</td>
-                  <td className="px-4 py-2.5 text-right font-bold text-violet-400">{f.best_final ?? '-'}</td>
-                  <td className="px-3 py-2.5 text-slate-400 text-xs whitespace-nowrap">{f.best_final_by ?? '-'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p className="sm:hidden text-xs text-slate-600 text-right px-4 py-2">← 좌우로 스크롤</p>
-      </div>
-
+        </>
+      )}
     </div>
   )
 }
