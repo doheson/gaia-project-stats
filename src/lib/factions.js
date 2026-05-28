@@ -1,11 +1,11 @@
 // 색상 그룹 (게임 공식 색상 기준)
 // 빨간색: 하이브, 하드쉬할라
 // 주황색: 기오덴, 발타크
-// 회색:   매안, 파이락
+// 회색:   매드 안드로이드, 파이락
 // 흰색:   네블라, 아이타
 // 파란색: 테란, 란티다
 // 분홍색: 다카니안, 팅커로이드
-// 에메랄드: 스자, 모웨이드
+// 에메랄드: 스페이스 자이언트, 모웨이드
 // 갈색:   엠바스, 타클론
 // 노란색: 제노스, 글린
 export const FACTIONS = [
@@ -19,13 +19,13 @@ export const FACTIONS = [
   { code: 'bal_taks',      nameEn: 'Baltaks',       nameKo: '발타크',            color: '#f97316', colorGroup: 'orange'  },
   { code: 'geodens',       nameEn: 'Geodens',       nameKo: '기오덴',            color: '#fb923c', colorGroup: 'orange'  },
   { code: 'firaks',        nameEn: 'Firaks',        nameKo: '파이락',            color: '#94a3b8', colorGroup: 'gray'    },
-  { code: 'bescods',       nameEn: 'Bescods',       nameKo: '매안',              color: '#64748b', colorGroup: 'gray'    },
+  { code: 'bescods',       nameEn: 'Bescods',       nameKo: '매드 안드로이드',   color: '#64748b', colorGroup: 'gray'    },
   { code: 'nevlas',        nameEn: 'Nevlas',        nameKo: '네블라',            color: '#e2e8f0', colorGroup: 'white'   },
   { code: 'itars',         nameEn: 'Itars',         nameKo: '아이타',            color: '#cbd5e1', colorGroup: 'white'   },
   { code: 'ivits',         nameEn: 'Ivits',         nameKo: '하이브',            color: '#dc2626', colorGroup: 'red'     },
   { code: 'darkanians',    nameEn: 'Darkanian',     nameKo: '다카니안',          color: '#f472b6', colorGroup: 'pink'    },
   { code: 'tinkeroids',    nameEn: 'Tinkeroid',     nameKo: '팅커로이드',        color: '#ec4899', colorGroup: 'pink'    },
-  { code: 'space_giants',  nameEn: 'Space Giant',   nameKo: '스자',             color: '#10b981', colorGroup: 'emerald' },
+  { code: 'space_giants',  nameEn: 'Space Giant',   nameKo: '스페이스 자이언트', color: '#10b981', colorGroup: 'emerald' },
   { code: 'mowyed',        nameEn: 'Mowayde',       nameKo: '모웨이드',          color: '#34d399', colorGroup: 'emerald' },
 ]
 
