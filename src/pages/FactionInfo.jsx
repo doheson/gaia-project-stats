@@ -149,9 +149,9 @@ const FACTION_DATA = [
   },
   {
     code: 'darkanians',
-    initial:  { power: [2,4,0], brainstone: false, credits: 15, ore: 7, knowledge: 3, qic: 2, gaiaformers: 0 },
+    initial:  { power: [4,2,0], brainstone: false, credits: 15, ore: 7, knowledge: 3, qic: 2, gaiaformers: 0 },
     income:   { powerCharge: 1, powerTokens: 0, qic: 0, credits: 2, ore: 2, knowledge: 1, note: '+2크레딧, +1충전' },
-    afterPower: [1,5,0],
+    afterPower: [3,3,0],
   },
   {
     code: 'tinkeroids',
@@ -290,28 +290,28 @@ const TURN_STYLE = {
 
 const FEDERATION_DATA = [
   { turns: '5턴', entries: [
-    { code: 'xenos',   label: null,            options: ['의회 + 교역소 + 광산'],    note: '시작 광산 세 개를 모두 가까이 놓았을 경우' },
-    { code: 'bescods', label: '매드 안드로이드', options: ['의회 + 광산'],            note: '시작 광산 두 개를 가까이 놓았을 경우' },
+    { code: 'xenos',   label: null,             options: ['의회 + 교역소 + 광산'],  note: '시작 광산 세 개를 모두 가까이 놓았을 경우' },
+    { code: 'bescods', label: '매드 안드로이드', options: ['의회★ + 광산'],         note: '시작 광산 두 개를 가까이 놓았을 경우' },
   ]},
   { turns: '6턴', entries: [
-    { code: 'ivits',      label: '하이브', options: ['의회 + 교역소 + 광산 + 우주정거장'],                                         note: null },
-    { code: 'xenos',      label: null,     options: ['의회 + 연구소'],                                                             note: null },
+    { code: 'ivits',      label: '하이브', options: ['의회 + 교역소 + 광산 + 우주정거장'],                                            note: null },
+    { code: 'xenos',      label: null,     options: ['의회★ + 연구소'],                                                              note: null },
     { code: 'tinkeroids', label: null,     options: ['의회 + 교역소 + 교역소', '의회 + 교역소 + 광산 + 광산', '의회★ + 연구소 + 광산'], note: null },
-    { code: 'mowyed',     label: null,     options: ['의회 + 광산 + 광산', '의회 + 교역소'],                                      note: 'T. F. 마스 기술연방 기준, 2파워 즉발 가이아포밍을 하면 1턴 느려지니 주의' },
+    { code: 'mowyed',     label: null,     options: ['의회 + 광산 + 광산', '의회 + 교역소'],                                         note: 'T. F. 마스 기술연방 기준, 2파워 즉발 가이아포밍을 하면 1턴 느려지니 주의' },
   ]},
   { turns: '7턴', entries: [
-    { code: 'space_giants', label: '스페이스 자이언트', options: ['의회 + 교역소 + 광산'], note: null },
+    { code: 'space_giants', label: '스페이스 자이언트', options: ['의회★ + 교역소 + 광산'], note: null },
   ]},
   { turns: '8턴+', entries: [
-    { code: 'gleens',     label: null, options: ['교역소 + 교역소 + 광산 + 광산 + 광산'],            note: null },
-    { code: 'taklons',    label: null, options: ['아카데미 + 교역소 + 광산', '아카데미 + 광산 + 광산 + 광산'], note: null },
-    { code: 'darkanians', label: null, options: ['의회 + 교역소 + 광산 + 광산'],                     note: null },
-    { code: 'firaks',     label: null, options: ['의회 + 연구소 + 광산'],                            note: null },
-    { code: 'geodens',    label: null, options: ['의회 + 광산 × 4'],                                note: null },
+    { code: 'gleens',     label: null, options: ['교역소 + 교역소 + 광산 + 광산 + 광산'],                    note: null },
+    { code: 'taklons',    label: null, options: ['아카데미★ + 교역소 + 광산', '아카데미★ + 광산 + 광산 + 광산'], note: null },
+    { code: 'darkanians', label: null, options: ['의회 + 교역소 + 광산 + 광산'],                            note: null },
+    { code: 'firaks',     label: null, options: ['의회★ + 연구소 + 광산'],                                 note: null },
+    { code: 'geodens',    label: null, options: ['의회 + 광산 × 4'],                                      note: null },
   ]},
   { turns: '9턴+', entries: [
-    { code: 'lantids', label: null,  options: ['의회 + 기생 × 4', '의회 + 교역소 + 기생 × 2'], note: null },
-    { code: null,      label: '그 외', options: ['연구소 + 교역소 + 광산 + 광산 + 광산'],      note: null },
+    { code: 'lantids', label: null,   options: ['의회 + 기생 × 4', '의회 + 교역소 + 기생 × 2'], note: null },
+    { code: null,      label: '그 외', options: ['연구소 + 교역소 + 광산 + 광산 + 광산'],       note: null },
   ]},
 ]
 
@@ -341,6 +341,13 @@ function FederationTable() {
       <div className="px-5 py-3 border-b border-slate-800">
         <h2 className="text-sm font-semibold text-slate-200">🤝 연방 구성 속도</h2>
         <p className="text-slate-500 text-xs mt-0.5">종족별 첫 연방 구성 예상 시점</p>
+      </div>
+      <div className="mx-4 my-3 flex items-start gap-2 px-3 py-2 rounded-lg bg-purple-950/40 border border-purple-800/50">
+        <span className="text-purple-400 font-bold text-sm shrink-0">★</span>
+        <p className="text-xs text-purple-300">
+          <span className="font-semibold">큰큰이 기술타일 뗀 건물</span>
+          <span className="text-purple-400/80"> — 해당 건물에서 고급 기술타일을 가져간 상태로, 연방 구성 시 건물 파워값이 1 증가합니다.</span>
+        </p>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm min-w-[480px]">

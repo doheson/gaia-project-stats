@@ -14,6 +14,7 @@ const CHART_STYLE = {
   tooltip: {
     contentStyle: { backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px', fontSize: 12 },
     labelStyle: { color: '#94a3b8' },
+    itemStyle: { color: '#e2e8f0' },
   },
 }
 
