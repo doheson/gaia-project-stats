@@ -6,6 +6,7 @@ const NAV = [
   { to: '/players',       label: '플레이어' },
   { to: '/factions',      label: '종족 통계' },
   { to: '/hall-of-fame',  label: '🏆 명예의 전당' },
+  { to: '/faction-info',  label: '📋 종족 정보' },
 ]
 
 export default function Layout() {
