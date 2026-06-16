@@ -65,5 +65,38 @@ export function aggregateFactionStats(rows) {
   }))
 }
 
+// match_results_view 행들을 받아 비딩 순위별 통계로 집계 (같은 게임 내 bid_score 내림차순)
+export function aggregateBidRankStats(rows) {
+  const matches = {}
+  for (const row of rows) {
+    if (!matches[row.match_id]) matches[row.match_id] = []
+    matches[row.match_id].push(row)
+  }
+
+  const slots = Array.from({ length: 4 }, () => ({ count: 0, wins: 0, _final: 0, _bid: 0, _rank: 0 }))
+
+  for (const players of Object.values(matches)) {
+    const sorted = [...players].sort((a, b) => b.bid_score - a.bid_score)
+    sorted.slice(0, 4).forEach((p, i) => {
+      slots[i].count++
+      if (p.rank === 1) slots[i].wins++
+      slots[i]._final += p.final_score
+      slots[i]._bid   += p.bid_score
+      slots[i]._rank  += p.rank
+    })
+  }
+
+  return slots.map((s, i) => ({
+    bid_rank:        i + 1,
+    label:           `비딩 ${i + 1}위`,
+    count:           s.count,
+    wins:            s.wins,
+    win_rate:        s.count > 0 ? round1(s.wins / s.count * 100) : 0,
+    avg_final_score: s.count > 0 ? round1(s._final / s.count) : 0,
+    avg_bid_score:   s.count > 0 ? round1(s._bid   / s.count) : 0,
+    avg_rank:        s.count > 0 ? round2(s._rank  / s.count) : 0,
+  }))
+}
+
 function round1(n) { return Math.round(n * 10) / 10 }
 function round2(n) { return Math.round(n * 100) / 100 }

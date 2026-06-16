@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import { supabase } from '../lib/supabase'
 import { getCurrentSeason, applySeasonFilter, getSeasonLabel } from '../lib/seasons'
-import { aggregateFactionStats } from '../lib/stats'
+import { aggregateFactionStats, aggregateBidRankStats } from '../lib/stats'
 import { getFactionColor } from '../lib/factions'
 import FactionBadge from '../components/FactionBadge'
 import SeasonFilter from '../components/SeasonFilter'
 import LoadingSpinner from '../components/LoadingSpinner'
+
+const BID_RANK_COLORS = ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6']
 
 const CHART_STYLE = {
   cartesian: { strokeDasharray: '3 3', stroke: '#1e293b' },
@@ -32,6 +34,7 @@ export default function Factions() {
   const [season, setSeason] = useState(getCurrentSeason())
   const [loading, setLoading] = useState(true)
   const [factions, setFactions] = useState([])
+  const [bidRankStats, setBidRankStats] = useState([])
   const [sortKey, setSortKey] = useState('pick_count')
   const [sortDesc, setSortDesc] = useState(true)
 
@@ -40,10 +43,11 @@ export default function Factions() {
       setLoading(true)
       let query = supabase
         .from('match_results_view')
-        .select('faction_name, faction_name_ko, bid_score, total_score, final_score, rank')
+        .select('match_id, faction_name, faction_name_ko, bid_score, total_score, final_score, rank')
       query = applySeasonFilter(query, season)
       const { data } = await query
       setFactions(aggregateFactionStats(data ?? []))
+      setBidRankStats(aggregateBidRankStats(data ?? []))
       setLoading(false)
     }
     load()
@@ -144,6 +148,52 @@ export default function Factions() {
               </>
             )}
           </div>
+
+          {bidRankStats.some(s => s.count > 0) && (
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+              <h2 className="text-sm font-semibold text-slate-200 mb-1">비딩 순위별 승률</h2>
+              <p className="text-xs text-slate-500 mb-4">같은 게임 내 bid_score 높은 순 — 비딩 1위가 가장 많이 비딩한 플레이어</p>
+              <ResponsiveContainer width="100%" height={180}>
+                <BarChart data={bidRankStats} margin={{ top: 5, right: 5, bottom: 5, left: -10 }}>
+                  <CartesianGrid {...CHART_STYLE.cartesian} vertical={false} />
+                  <XAxis dataKey="label" tick={CHART_STYLE.axis} />
+                  <YAxis tick={CHART_STYLE.axis} unit="%" domain={[0, 100]} />
+                  <Tooltip {...CHART_STYLE.tooltip} formatter={v => [`${v}%`, '승률']} />
+                  <Bar dataKey="win_rate" radius={[3, 3, 0, 0]}>
+                    {bidRankStats.map((_, i) => (
+                      <Cell key={i} fill={BID_RANK_COLORS[i]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+              <div className="mt-4 overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-slate-800">
+                      <th className="text-left px-3 py-2 text-xs text-slate-400 uppercase tracking-wider font-medium">비딩 순위</th>
+                      <th className="text-right px-3 py-2 text-xs text-slate-400 uppercase tracking-wider font-medium">게임 수</th>
+                      <th className="text-right px-3 py-2 text-xs text-slate-400 uppercase tracking-wider font-medium">승률</th>
+                      <th className="text-right px-3 py-2 text-xs text-slate-400 uppercase tracking-wider font-medium">평균 비딩</th>
+                      <th className="text-right px-3 py-2 text-xs text-slate-400 uppercase tracking-wider font-medium">평균 최종점수</th>
+                      <th className="text-right px-3 py-2 text-xs text-slate-400 uppercase tracking-wider font-medium">평균 순위</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/60">
+                    {bidRankStats.map((s, i) => (
+                      <tr key={s.bid_rank} className="hover:bg-slate-800/40 transition-colors">
+                        <td className="px-3 py-2 font-medium" style={{ color: BID_RANK_COLORS[i] }}>{s.label}</td>
+                        <td className="px-3 py-2 text-right text-slate-300">{s.count}</td>
+                        <td className="px-3 py-2 text-right font-medium" style={{ color: BID_RANK_COLORS[i] }}>{s.win_rate}%</td>
+                        <td className="px-3 py-2 text-right text-slate-300">{s.avg_bid_score}</td>
+                        <td className="px-3 py-2 text-right text-slate-300">{s.avg_final_score}</td>
+                        <td className="px-3 py-2 text-right text-slate-300">{s.avg_rank}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>
