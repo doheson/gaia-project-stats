@@ -9,6 +9,7 @@ import Factions from './pages/Factions'
 import HallOfFame from './pages/HallOfFame'
 import FactionInfo from './pages/FactionInfo'
 import NewMatch from './pages/NewMatch'
+import ManagePlayers from './pages/ManagePlayers'
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="hall-of-fame" element={<HallOfFame />} />
           <Route path="faction-info" element={<FactionInfo />} />
           <Route path="new-match" element={<NewMatch />} />
+          <Route path="manage-players" element={<ManagePlayers />} />
         </Route>
       </Routes>
     </BrowserRouter>

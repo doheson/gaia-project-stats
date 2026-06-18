@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { getCurrentSeason, applySeasonFilter, getSeasonLabel } from '../lib/seasons'
 import { aggregatePlayerStats } from '../lib/stats'
@@ -52,7 +52,15 @@ export default function Players() {
           <h1 className="text-xl sm:text-2xl font-bold text-slate-100">플레이어</h1>
           <p className="text-slate-400 text-sm mt-1">{getSeasonLabel(season)} · 총 {players.length}명</p>
         </div>
-        <SeasonFilter value={season} onChange={setSeason} />
+        <div className="flex items-center gap-2">
+          <NavLink
+            to="/manage-players"
+            className="text-sm text-slate-400 hover:text-violet-300 border border-slate-700 hover:border-violet-500 px-3 py-1.5 rounded-lg transition-colors"
+          >
+            + 플레이어 관리
+          </NavLink>
+          <SeasonFilter value={season} onChange={setSeason} />
+        </div>
       </div>
 
       <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">

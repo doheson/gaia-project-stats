@@ -11,11 +11,15 @@ function groupByMatch(rows) {
   const map = {}
   for (const row of rows) {
     if (!map[row.match_id]) {
-      map[row.match_id] = { match_id: row.match_id, played_at: row.played_at, memo: row.memo, players: [] }
+      map[row.match_id] = { match_id: row.match_id, played_at: row.played_at, created_at: row.created_at, memo: row.memo, players: [] }
     }
     map[row.match_id].players.push(row)
   }
-  return Object.values(map).sort((a, b) => new Date(b.played_at) - new Date(a.played_at))
+  return Object.values(map).sort((a, b) => {
+    const dateDiff = new Date(b.played_at) - new Date(a.played_at)
+    if (dateDiff !== 0) return dateDiff
+    return new Date(b.created_at) - new Date(a.created_at)
+  })
 }
 
 export default function MatchList() {
@@ -28,8 +32,9 @@ export default function MatchList() {
       setLoading(true)
       let query = supabase
         .from('match_results_view')
-        .select('match_id, played_at, memo, player_name, faction_name, faction_name_ko, final_score, total_score, bid_score, rank')
+        .select('match_id, played_at, created_at, memo, player_name, faction_name, faction_name_ko, final_score, total_score, bid_score, rank')
         .order('played_at', { ascending: false })
+        .order('created_at', { ascending: false })
       query = applySeasonFilter(query, season)
       const { data } = await query
       setMatches(groupByMatch(data ?? []))
