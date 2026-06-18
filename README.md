@@ -24,11 +24,13 @@
 - **대시보드** — 전체 게임 수, 플레이어 순위, 최근 게임, 최고 승률 종족 한눈에 확인
 - **게임 목록** — 전체 게임 기록 조회 (날짜·종족·점수·순위)
 - **게임 상세** — 단일 게임의 4인 결과 상세 확인
-- **플레이어 통계** — 플레이어별 승률, 평균 점수, 최고점 등 통계
+- **플레이어 통계** — 플레이어별 승률, 평균 점수, 최고점 등 통계 (정렬 가능)
 - **플레이어 상세** — 개인 점수 추이 차트, 종족별 전적
-- **종족 통계** — 18종족별 픽률, 승률, 평균 점수 비교
+- **종족 통계** — 18종족별 픽률, 승률, 평균 점수 비교 + 비딩 순위별 승률 분석
 - **🏆 명예의 전당** — 역대 최고 기록 (종료점수·최종점수·우승 횟수 TOP 5, 종족별 최고 기록)
+- **📋 종족 정보** — 18종족 시작 자원·1라운드 수입 표, 종족별 연방 구성 속도 표
 - **게임 입력** — 새 게임 결과 입력 (최종 점수·순위 자동 계산)
+- **플레이어 관리** — 플레이어 추가·삭제
 
 ---
 
@@ -41,7 +43,7 @@
 | 시즌 1 | 1월 ~ 6월 |
 | 시즌 2 | 7월 ~ 12월 |
 
-대시보드, 게임 목록, 플레이어, 종족 통계 페이지에서 시즌 필터를 사용할 수 있으며, 명예의 전당은 전체 기간 기준입니다.
+대시보드, 게임 목록, 플레이어, 종족 통계, 명예의 전당 페이지에서 시즌 필터를 사용할 수 있습니다.
 
 ---
 
@@ -63,28 +65,34 @@
 ```
 src/
 ├── lib/
-│   ├── supabase.js       # Supabase 클라이언트
-│   ├── factions.js       # 18종족 데이터 및 색상 정의
-│   ├── seasons.js        # 시즌 계산 (반기 단위)
-│   └── stats.js          # 플레이어·종족 통계 집계 함수
+│   ├── supabase.js        # Supabase 클라이언트
+│   ├── factions.js        # 18종족 데이터 및 색상 정의
+│   ├── seasons.js         # 시즌 계산 (반기 단위)
+│   ├── stats.js           # 플레이어·종족·비딩순위 통계 집계 함수
+│   ├── matches.js         # 게임 목록 그룹핑 유틸
+│   └── chartStyle.js      # Recharts 공통 스타일
+├── hooks/
+│   └── useSeasonFilter.js # 시즌 필터 상태 훅
 ├── components/
-│   ├── Layout.jsx        # 네비게이션 + 레이아웃
-│   ├── SeasonFilter.jsx  # 시즌 선택 드롭다운
-│   ├── CustomSelect.jsx  # 공용 셀렉트 컴포넌트
-│   ├── FactionBadge.jsx  # 종족 색상 뱃지
-│   ├── RankBadge.jsx     # 순위 뱃지 (1~4등)
-│   ├── StatCard.jsx      # 통계 요약 카드
+│   ├── Layout.jsx         # 네비게이션 + 레이아웃
+│   ├── SeasonFilter.jsx   # 시즌 선택 드롭다운
+│   ├── CustomSelect.jsx   # 공용 셀렉트 컴포넌트
+│   ├── FactionBadge.jsx   # 종족 색상 뱃지
+│   ├── RankBadge.jsx      # 순위 뱃지 (1~4등)
+│   ├── StatCard.jsx       # 통계 요약 카드
 │   └── LoadingSpinner.jsx
 ├── pages/
-│   ├── Dashboard.jsx     # 메인 대시보드
-│   ├── MatchList.jsx     # 게임 목록
-│   ├── MatchDetail.jsx   # 게임 상세
-│   ├── Players.jsx       # 플레이어 통계 목록
-│   ├── PlayerDetail.jsx  # 플레이어 상세
-│   ├── Factions.jsx      # 종족 통계
-│   ├── HallOfFame.jsx    # 명예의 전당
-│   └── NewMatch.jsx      # 게임 입력 폼
-└── App.jsx               # 라우터 설정
+│   ├── Dashboard.jsx      # 메인 대시보드
+│   ├── MatchList.jsx      # 게임 목록
+│   ├── MatchDetail.jsx    # 게임 상세
+│   ├── Players.jsx        # 플레이어 통계 목록
+│   ├── PlayerDetail.jsx   # 플레이어 상세
+│   ├── Factions.jsx       # 종족 통계
+│   ├── HallOfFame.jsx     # 명예의 전당
+│   ├── FactionInfo.jsx    # 종족 정보
+│   ├── NewMatch.jsx       # 게임 입력 폼
+│   └── ManagePlayers.jsx  # 플레이어 관리
+└── App.jsx                # 라우터 설정
 ```
 
 ---
