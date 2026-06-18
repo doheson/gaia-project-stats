@@ -63,6 +63,9 @@
 ## 프로젝트 구조
 
 ```
+api/
+│   ├── ping.js            # 헬스체크
+│   └── record-match.js    # 외부 게임 결과 자동 등록 API
 src/
 ├── lib/
 │   ├── supabase.js        # Supabase 클라이언트
@@ -114,14 +117,30 @@ src/
 
 ---
 
+## 외부 게임 결과 자동 등록 API
+
+외부 사이트(온라인 가이아 프로젝트 플레이 사이트)에서 게임이 끝나면 결과를 전송해 자동으로 기록할 수 있습니다.
+
+```
+POST /api/record-match
+Authorization: Bearer <API_SECRET>
+```
+
+상세 스펙은 `docs/api-spec.md` 참고.
+
+---
+
 ## 환경 변수
 
-`.env` 파일에 아래 두 값을 설정합니다.
+`.env` 파일에 아래 값을 설정합니다.
 
 ```
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+API_SECRET=your_api_secret
 ```
+
+Vercel 배포 시에도 동일한 환경변수를 설정해야 합니다 (Vercel 대시보드 → 프로젝트 → Settings → Environments).
 
 ---
 

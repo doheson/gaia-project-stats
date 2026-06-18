@@ -43,6 +43,9 @@
 ## 파일 구조
 
 ```
+api/
+├── ping.js              # Supabase 연결 확인용 헬스체크
+└── record-match.js      # 외부 사이트 게임 결과 자동 등록 API
 src/
 ├── lib/
 │   ├── supabase.js        # Supabase 클라이언트
@@ -139,6 +142,43 @@ src/
 
 ---
 
+## 외부 게임 결과 자동 등록 API
+
+외부 웹사이트(가이아 프로젝트 온라인 플레이 사이트)에서 게임이 끝나면 결과를 전송해 자동으로 기록하는 API.
+
+**엔드포인트:** `POST /api/record-match`  
+**구현 파일:** `api/record-match.js` (Vercel Serverless Function)  
+**스펙 문서:** `docs/api-spec.md` (외부 사이트 작업자에게 전달)
+
+### 인증
+- `Authorization: Bearer <API_SECRET>` 헤더 필요
+- `API_SECRET`은 Vercel 환경변수에만 존재 (소스코드에 없음)
+- `VITE_SUPABASE_ANON_KEY`와 다른 별도 값 — 우리가 직접 정해서 상대방에게만 공유
+
+### 환경변수 (Vercel Production)
+| 변수 | 용도 |
+|------|------|
+| `VITE_SUPABASE_URL` | Supabase DB 주소 |
+| `VITE_SUPABASE_ANON_KEY` | Supabase 접근 키 |
+| `API_SECRET` | 외부 API 인증용 시크릿 키 |
+
+### 플레이어 이름 매칭 로직
+1. `"준혁/97"` → 정확히 일치하는 것 먼저 찾음
+2. `"준혁"` → 슬래시 앞 이름만으로 재시도
+   - 1명만 일치 → 자동 매칭
+   - 2명 이상 일치(동명이인) → 400 에러 + 후보 목록 반환
+   - 0명 → 400 에러
+
+### 처리 흐름
+1. 인증 검사
+2. 페이로드 유효성 검사 (4명, 점수 범위 등)
+3. 플레이어 이름 → DB player_id 매핑
+4. 종족명(한국어/영어/code) → DB faction_id 매핑
+5. final_score 기준으로 순위 자동 계산
+6. `matches` insert → `match_results` insert (실패 시 match 롤백)
+
+---
+
 ## 작업 이력
 
 ### 2025-05-26
@@ -147,6 +187,12 @@ src/
 2. **명예의 전당 탭 추가**
    - 신규: `src/pages/HallOfFame.jsx`
    - 수정: `src/App.jsx` (라우트 추가), `src/components/Layout.jsx` (네비 추가)
+
+### 2026-06-18
+- **외부 게임 결과 자동 등록 API** 추가
+  - 신규: `api/record-match.js`
+  - 신규: `docs/api-spec.md` (외부 사이트 작업자용 스펙 문서)
+  - Vercel 환경변수에 `API_SECRET` 추가
 
 ### 이후 추가된 기능 (현재 코드 기준)
 - **종족 정보 탭** (`/faction-info`) — 18종족 시작자원·수입 표 + 연방 구성 속도 표

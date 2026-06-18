@@ -41,13 +41,13 @@ POST https://gaia-stats.vercel.app/api/record-match
       "total_score": 41
     },
     {
-      "name": "성현/89",
+      "name": "성태/98",
       "faction": "xenos",
       "bid_score": 1,
       "total_score": 37
     },
     {
-      "name": "민준/95",
+      "name": "도희/95",
       "faction": "글린",
       "bid_score": 0,
       "total_score": 33
