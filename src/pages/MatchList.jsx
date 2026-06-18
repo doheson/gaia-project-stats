@@ -1,29 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { getCurrentSeason, applySeasonFilter, getSeasonLabel } from '../lib/seasons'
+import { applySeasonFilter, getSeasonLabel } from '../lib/seasons'
+import { groupByMatch } from '../lib/matches'
+import { useSeasonFilter } from '../hooks/useSeasonFilter'
 import FactionBadge from '../components/FactionBadge'
 import RankBadge from '../components/RankBadge'
 import SeasonFilter from '../components/SeasonFilter'
 import LoadingSpinner from '../components/LoadingSpinner'
 
-function groupByMatch(rows) {
-  const map = {}
-  for (const row of rows) {
-    if (!map[row.match_id]) {
-      map[row.match_id] = { match_id: row.match_id, played_at: row.played_at, created_at: row.created_at, memo: row.memo, players: [] }
-    }
-    map[row.match_id].players.push(row)
-  }
-  return Object.values(map).sort((a, b) => {
-    const dateDiff = new Date(b.played_at) - new Date(a.played_at)
-    if (dateDiff !== 0) return dateDiff
-    return new Date(b.created_at) - new Date(a.created_at)
-  })
-}
-
 export default function MatchList() {
-  const [season, setSeason] = useState(getCurrentSeason())
+  const [season, setSeason] = useSeasonFilter()
   const [loading, setLoading] = useState(true)
   const [matches, setMatches] = useState([])
 

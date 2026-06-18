@@ -1,24 +1,16 @@
 import { useEffect, useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import { supabase } from '../lib/supabase'
-import { getCurrentSeason, applySeasonFilter, getSeasonLabel } from '../lib/seasons'
+import { applySeasonFilter, getSeasonLabel } from '../lib/seasons'
 import { aggregateFactionStats, aggregateBidRankStats } from '../lib/stats'
 import { getFactionColor } from '../lib/factions'
+import { CHART_STYLE } from '../lib/chartStyle'
+import { useSeasonFilter } from '../hooks/useSeasonFilter'
 import FactionBadge from '../components/FactionBadge'
 import SeasonFilter from '../components/SeasonFilter'
 import LoadingSpinner from '../components/LoadingSpinner'
 
 const BID_RANK_COLORS = ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6']
-
-const CHART_STYLE = {
-  cartesian: { strokeDasharray: '3 3', stroke: '#1e293b' },
-  axis: { fill: '#64748b', fontSize: 11 },
-  tooltip: {
-    contentStyle: { backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px', fontSize: 12 },
-    labelStyle: { color: '#94a3b8' },
-    itemStyle: { color: '#e2e8f0' },
-  },
-}
 
 const SORT_OPTIONS = [
   { key: 'pick_count',      label: '픽 수',        desc: true  },
@@ -31,7 +23,7 @@ const SORT_OPTIONS = [
 ]
 
 export default function Factions() {
-  const [season, setSeason] = useState(getCurrentSeason())
+  const [season, setSeason] = useSeasonFilter()
   const [loading, setLoading] = useState(true)
   const [factions, setFactions] = useState([])
   const [bidRankStats, setBidRankStats] = useState([])

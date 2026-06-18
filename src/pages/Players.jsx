@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { getCurrentSeason, applySeasonFilter, getSeasonLabel } from '../lib/seasons'
+import { applySeasonFilter, getSeasonLabel } from '../lib/seasons'
 import { aggregatePlayerStats } from '../lib/stats'
+import { useSeasonFilter } from '../hooks/useSeasonFilter'
 import SeasonFilter from '../components/SeasonFilter'
 import LoadingSpinner from '../components/LoadingSpinner'
 
@@ -15,7 +16,7 @@ const SORT_OPTIONS = [
 ]
 
 export default function Players() {
-  const [season, setSeason] = useState(getCurrentSeason())
+  const [season, setSeason] = useSeasonFilter()
   const [loading, setLoading] = useState(true)
   const [players, setPlayers] = useState([])
   const [sortKey, setSortKey] = useState('wins')

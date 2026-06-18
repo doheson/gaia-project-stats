@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { applySeasonFilter, getSeasonLabel } from '../lib/seasons'
 import { aggregatePlayerStats } from '../lib/stats'
+import { useSeasonFilter } from '../hooks/useSeasonFilter'
 import FactionBadge from '../components/FactionBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
 import SeasonFilter from '../components/SeasonFilter'
@@ -22,7 +23,7 @@ function Th({ children, right }) {
 }
 
 export default function HallOfFame() {
-  const [season, setSeason] = useState('all')
+  const [season, setSeason] = useSeasonFilter('all')
   const [loading, setLoading] = useState(true)
   const [topTotal, setTopTotal]   = useState([])   // 종료점수 개인 top5
   const [topFinal, setTopFinal]   = useState([])   // 최종점수 개인 top5

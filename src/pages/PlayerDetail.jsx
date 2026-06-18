@@ -6,19 +6,12 @@ import {
 } from 'recharts'
 import { supabase } from '../lib/supabase'
 import { getFaction } from '../lib/factions'
+import { CHART_STYLE } from '../lib/chartStyle'
 import FactionBadge from '../components/FactionBadge'
 import RankBadge from '../components/RankBadge'
 import StatCard from '../components/StatCard'
 import LoadingSpinner from '../components/LoadingSpinner'
 
-const CHART_STYLE = {
-  cartesian: { strokeDasharray: '3 3', stroke: '#1e293b' },
-  axis: { fill: '#64748b', fontSize: 11 },
-  tooltip: {
-    contentStyle: { backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px', fontSize: 12 },
-    labelStyle: { color: '#94a3b8' },
-  },
-}
 
 export default function PlayerDetail() {
   const { id } = useParams()
