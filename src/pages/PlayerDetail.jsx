@@ -32,9 +32,10 @@ export default function PlayerDetail() {
         supabase.from('player_stats_view').select('*').eq('player_id', id).single(),
         supabase
           .from('match_results_view')
-          .select('match_id, played_at, faction_name, faction_name_ko, bid_score, total_score, final_score, rank')
+          .select('match_id, played_at, created_at, faction_name, faction_name_ko, bid_score, total_score, final_score, rank')
           .eq('player_id', id)
-          .order('played_at', { ascending: true }),
+          .order('played_at', { ascending: true })
+          .order('created_at', { ascending: true }),
       ])
       setStats(statsRes.data)
       setHistory(historyRes.data ?? [])
