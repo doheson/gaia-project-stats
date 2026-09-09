@@ -6,6 +6,8 @@ export default function ManagePlayers() {
   const [players, setPlayers] = useState([])
   const [loading, setLoading] = useState(true)
   const [name, setName] = useState('')
+  const [addPw, setAddPw] = useState('')
+  const [addPwError, setAddPwError] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [deleteTarget, setDeleteTarget] = useState(null)
@@ -25,6 +27,10 @@ export default function ManagePlayers() {
     e.preventDefault()
     const trimmed = name.trim()
     if (!trimmed) return
+    if (addPw !== '1228') {
+      setAddPwError(true)
+      return
+    }
     setSaving(true)
     setError('')
     const { error: err } = await supabase.from('players').insert({ name: trimmed })
@@ -32,6 +38,8 @@ export default function ManagePlayers() {
       setError(err.message)
     } else {
       setName('')
+      setAddPw('')
+      setAddPwError(false)
       await load()
     }
     setSaving(false)
@@ -85,13 +93,21 @@ export default function ManagePlayers() {
           />
           <button
             type="submit"
-            disabled={saving || !name.trim()}
+            disabled={saving || !name.trim() || !addPw}
             className="bg-violet-600 hover:bg-violet-500 disabled:opacity-40 text-white text-sm px-4 py-2 rounded-lg font-medium transition-colors"
           >
             {saving ? '추가 중…' : '추가'}
           </button>
         </div>
+        <input
+          type="password"
+          value={addPw}
+          onChange={e => { setAddPw(e.target.value); setAddPwError(false) }}
+          placeholder="관리자 비밀번호"
+          className={`w-full bg-slate-800 border rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none ${addPwError ? 'border-red-500' : 'border-slate-700 focus:border-violet-500'}`}
+        />
         <p className="text-xs text-slate-500">형식: <span className="text-slate-400">이름/출생연도2자리</span> (예: 준혁/97, 루다/90)</p>
+        {addPwError && <p className="text-xs text-red-400">비밀번호가 일치하지 않습니다.</p>}
         {error && <p className="text-xs text-red-400">{error}</p>}
       </form>
 
