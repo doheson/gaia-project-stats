@@ -42,10 +42,10 @@ export default function NewMatch() {
     return { bid, final, total: bid + final }
   })
 
-  // Auto-rank: sort by final desc, total desc as tiebreaker
+  // Auto-rank: sort by final desc, bid asc as tiebreaker (동점 시 비딩이 적은 쪽이 상위)
   const ranks = (() => {
     const withIdx = computed.map((c, i) => ({ ...c, i }))
-    withIdx.sort((a, b) => b.final - a.final || b.total - a.total)
+    withIdx.sort((a, b) => b.final - a.final || a.bid - b.bid)
     const r = new Array(4).fill(0)
     withIdx.forEach((c, pos) => { r[c.i] = pos + 1 })
     return r

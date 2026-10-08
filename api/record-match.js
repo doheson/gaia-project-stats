@@ -92,11 +92,11 @@ export default async function handler(req, res) {
     }
   }
 
-  // 순위 계산: final_score(= total - bid) 내림차순, 동점 시 total_score 내림차순
+  // 순위 계산: final_score(= total - bid) 내림차순, 동점 시 bid_score 오름차순(비딩이 적은 쪽이 상위)
   const sorted = [...players].sort(
     (a, b) =>
       (b.total_score - b.bid_score) - (a.total_score - a.bid_score) ||
-      b.total_score - a.total_score
+      a.bid_score - b.bid_score
   )
   const rankMap = new Map(sorted.map((p, i) => [p.name, i + 1]))
 

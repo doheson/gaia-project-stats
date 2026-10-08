@@ -105,7 +105,7 @@ src/
 ## 페이지별 주요 특이사항
 
 ### NewMatch.jsx (게임 입력)
-- `final_score` 기준으로 순위 자동 계산 (동점 시 `total_score` 내림차순 타이브레이커)
+- `final_score` 기준으로 순위 자동 계산 (동점 시 `bid_score` 오름차순(비딩이 적은 쪽이 상위) 타이브레이커)
 - 종족 선택 시 같은 **colorGroup** (색상 그룹)이면 이미 선택된 것으로 간주해 비활성화
 - 폼 제출: `matches` 테이블에 먼저 insert → `match_results` insert 실패 시 match 롤백
 
